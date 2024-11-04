@@ -1,0 +1,90 @@
+<div class="container-fluid" #tableRef ngxPrintElement id="printSection">
+  <!-- HTML form mark up -->
+
+  <div class="d-flex justify-content-between">
+    <div>
+      <h4 class="text-secondary">Pickleball Report Card</h4>
+    </div>
+    <div class="ml-auto">
+    <!-- Component -->
+    <!-- <ngx-print-element #element="element">
+      <button (click)="element?.print(tableElement)" class="btn btn-link m-1">Print</button>
+    </ngx-print-element> -->
+
+    <!-- Service -->
+    <button (click)="onPrint1(tableElement)" class="btn btn-link m-1 print-none">Print</button>
+      <!-- <button [print]="['printSection']" class="btn btn-link m-1 print-none">Print</button> -->
+    </div>
+  </div>
+
+
+
+  <div class="card">
+    <div class="card-header">
+      <h5>Player Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row row-cols-2">
+        <div class="col"><strong>Name:</strong> {{ model.playername }}</div>
+        <div class="col"><strong>Email:</strong> {{ model['playeremail'] }}</div>
+        <div class="col"><strong>Assessment Date:</strong> {{ model['assessmentDate'] | date }}</div>
+        <div class="col" ng-if="!model['level']"><strong>Skill Level:</strong> {{ model['level'] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">
+      <h5>Skill Evaluation</h5>
+    </div>
+    <div class="card-body">
+      <table class="table mt-3">
+        <thead>
+          <tr>
+            <th scope="col">Skill Code</th>
+            <th scope="col">Description</th>
+            <th scope="col">Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (skill of objSkillRating; track skill) {
+          <tr>
+            <td>{{ skill.Skillcode }}</td>
+            <td>{{ skill.Description }}</td>
+            <td>
+              <span [ngClass]="getGradeColor(skill.Rating)">{{ skill.Rating }}</span>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">
+      <h5>Evaluator Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row row-cols-2">
+        <div class="col"><strong>Name:</strong> {{ model['evaluatorname'] }}</div>
+        <div class="col"><strong>Email:</strong> {{ model['evaluatoremail'] }}</div>
+      </div>
+      <strong>Evaluation Notes:</strong> {{ model['Notes'] }}
+    </div>
+  </div>
+
+
+
+  <div class="alert alert-warning mt-3">
+    <strong>Rating Legend</strong>
+    <ul>
+      <li class="text-success">A = Solid, consistent performance</li>
+      <li class="text-info">B = Good basic form, but needs work</li>
+      <li class="text-warning">C = Attempted but very poorly executed/needs work</li>
+      <li class="text-danger">D = Not observed or not able to execute</li>
+    </ul>
+  </div>
+</div>
+
+<!-- <p>{{ model | json }}</p> -->

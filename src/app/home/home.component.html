@@ -1,0 +1,46 @@
+<div class="container-fluid">
+  <div class="jumbotron">
+    <h1 class="display-4">Hello Pickleballers!</h1>
+    <p>
+      The Pickleball app provides a thorough evaluation of knowledge, skills, and competencies for player
+      rating level 2.0 to 5.0
+    </p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" routerLink="/rating" role="button">Get Started</a>
+    </p>
+  </div>
+
+  <hr />
+
+  Share Mickleball on social media
+  <share-buttons
+    theme="circles-dark"
+    [include]="[
+      'copy',
+      'facebook',
+      'email',
+      'twitter',
+      'messenger',
+      'whatsapp',
+      'linkedin',
+      'pinterest',
+      'print',
+      'reddit',
+      'sms',
+      'telegram',
+      'tumblr',
+      'viber',
+      'vk',
+      'mix',
+      'line',
+      'xing'
+    ]"
+    [showIcon]="true"
+    [showText]="true"
+    url="https://mickleball.azurewebsites.net"
+    description="Evaluation of Pickleball knowledge, skills, and competencies"
+    twitterAccount="FujiNguyenIT"
+    class="pt-5"
+  >
+  </share-buttons>
+</div>

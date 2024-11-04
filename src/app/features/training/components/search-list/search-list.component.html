@@ -1,0 +1,54 @@
+<!-- <div class="col">
+<ngb-accordion [closeOthers]="true" activeIds="video-1">
+  <ngb-panel *ngFor="let video of videos; index as i" id="video-{{ i + 1 }}">
+    <ng-template ngbPanelTitle>
+      <b>{{ video.title }}</b>
+    </ng-template>
+    <ng-template ngbPanelContent>
+      <div class="card border-0">
+        <youtube-player width="100%" [videoId]="video.videoId"></youtube-player>
+        <div class="card-body">
+          <p class="card-text">{{ video.description }}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <i>Video by</i> <a href="{{ video.channelUrl }}" class="card-link">{{ video.channelTitle }}</a>
+          </li>
+          <li class="list-group-item"><i>Published on</i> {{ video.publishedAt | date }}</li>
+        </ul>
+      </div>
+    </ng-template>
+  </ngb-panel>
+</ngb-accordion>
+</div> -->
+<div ngbAccordion [closeOthers]="true">
+  @for (video of videos; track video) {
+  <div ngbAccordionItem [collapsed]="video.title !== 'First'">
+    <h2 ngbAccordionHeader>
+      <button ngbAccordionButton>{{ video.title }}</button>
+    </h2>
+    <div ngbAccordionCollapse>
+      <div ngbAccordionBody>
+        <ng-template>
+          <div class="card border-0">
+            <youtube-player width="100%" [videoId]="video.videoId"></youtube-player>
+            <div class="card-body">
+              <p class="card-text">{{ video.description }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <i>Video by</i> <a href="{{ video.channelUrl }}" class="card-link">{{ video.channelTitle }}</a>
+              </li>
+              <li class="list-group-item"><i>Published on</i> {{ video.publishedAt | date }}</li>
+            </ul>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  }
+</div>
+
+@if (debug) {
+<p>{{ videos | json }}</p>
+}

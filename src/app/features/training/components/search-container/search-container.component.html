@@ -1,0 +1,10 @@
+<div>
+  <app-search-input (search)="handleSearch($event)"></app-search-input>
+  @if (inputTouched && !videos.length) {
+  <div>
+    <div class="alert alert-info" role="alert">No Video Found</div>
+  </div>
+  } @if (!loading) {
+  <app-search-list [videos]="videos"></app-search-list>
+  }
+</div>

@@ -1,0 +1,25 @@
+<div class="container-fluid">
+  <h3 class="text-secondary">Level {{ skillLevel }} Skill Assessment</h3>
+
+  <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <li [ngbNavItem]="1">
+      <a ngbNavLink>Evaluation</a>
+      <ng-template ngbNavContent>
+        <app-evaluation [model]="model" (ValidEvaluationEvent)="selectTab($event)"></app-evaluation>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="2" [disabled]="disabled">
+      <a ngbNavLink>Report Card</a>
+      <ng-template ngbNavContent>
+        <app-reportcard [model]="model"></app-reportcard>
+      </ng-template>
+    </li>
+  </ul>
+
+  <!-- Content output -->
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</div>
+
+@if (debug) {
+<p>{{ model | json }}</p>
+}
