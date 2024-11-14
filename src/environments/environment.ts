@@ -16,7 +16,7 @@ export const environment = {
   serverUrl: '/api',
   defaultLanguage: 'en-US',
   supportedLanguages: ['en-US'],
-  debug: false,
+  debug: true,
   //REST API server
   apiEndpoint: 'https://localhost:44378/api/v1',
   //Api_Endpoint: 'https://cat-netcore-api.azurewebsites.net/api/v1',

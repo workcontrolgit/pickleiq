@@ -1,0 +1,54 @@
+<div class="container-fluid mt-3">
+  <div class="card">
+    <div class="card-header">
+      <div class="float-start"><h3 class="text-secondary">Positions</h3></div>
+      <div class="float-end">
+        <!-- Add button with routerLink to the detail page -->
+        <a class="btn btn-primary" ngbTooltip="Click to Create New Entry" [routerLink]="['/position/detail']"
+          ><i class="fa fa-plus"></i> Add</a
+        >
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row table-responsive">
+        <table datatable [dtOptions]="dtOptions" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Position Number</th>
+              <th>Position Title</th>
+              <th class="d-none d-sm-table-cell">Department</th>
+              <th class="d-none d-sm-table-cell">Salary Range</th>
+            </tr>
+          </thead>
+          @if(positions.length !== 0) {
+
+          <tbody>
+            @for(position of positions; track position.id) {
+            <tr (click)="wholeRowClick(position)">
+              <td>
+                {{ position.positionNumber }}
+              </td>
+              <td>{{ position.positionTitle }}</td>
+              <td class="d-none d-sm-table-cell">{{ position.department.name }}</td>
+              <td class="d-none d-sm-table-cell">
+                {{ position.salaryRange.minSalary }} - {{ position.salaryRange.maxSalary }}
+              </td>
+            </tr>
+            }
+          </tbody>
+
+          } @else {
+          <tbody>
+            <tr>
+              <td colspan="4" class="no-data-available">No data!</td>
+            </tr>
+          </tbody>
+          }
+        </table>
+      </div>
+    </div>
+    <div class="card-footer">
+      Hint: Searchable and sortable columns are Position Number, Position Title and Department
+    </div>
+  </div>
+</div>
