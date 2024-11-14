@@ -85,7 +85,7 @@ export class ApiEndpointsService {
   // call regular endpoint without boolean true at end
   // https://localhost:44378/api/v1 (ASP.NET CORE REST API.  Repo https://github.com/workcontrolgit/AngularNgxDataTableBackend)
 
-  public putPositionsPagedEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
+  // public putPositionsPagedEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
 
   /* #endregion */
 
