@@ -1,5 +1,5 @@
 import { Logger } from '@core/logger.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,6 +17,8 @@ import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 // ui service modal and toaster
 import { ModalService } from '@app/services/modal/modal.service';
 import { ToastService } from '@app/services/toast/toast.service';
+
+import { ToastServiceGlobal } from '@app/services/toast/toaster-service';
 
 // interface classes
 import { Position } from '@shared/interfaces/position';
@@ -48,6 +50,7 @@ const log = new Logger('Detail');
   ],
 })
 export class PositionDetailComponent implements OnInit {
+  isPlaceholderFixed: boolean = false;
   formMode = 'New';
   sub: any;
   id: any;
@@ -62,6 +65,7 @@ export class PositionDetailComponent implements OnInit {
 
   constructor(
     private toastService: ToastService,
+    private toastServiceGlobal: ToastServiceGlobal,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private apiHttpService: ApiHttpService,
@@ -227,6 +231,18 @@ export class PositionDetailComponent implements OnInit {
       autohide: true,
     });
   }
+
+	showStandard(template: TemplateRef<any>) {
+		this.toastServiceGlobal.show({ template });
+	}
+
+  showSuccess(template: TemplateRef<any>) {
+		this.toastServiceGlobal.show({ template, classname: 'bg-success text-light', delay: 10000 });
+	}
+
+	showDanger(template: TemplateRef<any>) {
+		this.toastServiceGlobal.show({ template, classname: 'bg-danger text-light', delay: 15000 });
+	}
 
   // convenience getter for easy access to form fields
   get f() {

@@ -19,6 +19,8 @@ import { ShouldLoginComponent } from './should-login.component';
 
 import { ToastComponent } from '@shared/toast/toast.component';
 
+import { ToastsContainer } from '@app/services/toast/toasts-container.component';
+
 import { NgHttpLoaderModule } from 'ng-http-loader';
 
 import { API_KEY, GoogleSheetsDbService } from 'ng-google-sheets-db';
@@ -60,6 +62,7 @@ export function initTableSkills(configService: TableSkillsService) {
     FallbackComponent,
     ShouldLoginComponent,
     ToastComponent,
+    ToastsContainer,
   ],
   providers: [
     {

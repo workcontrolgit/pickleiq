@@ -95,6 +95,6 @@ export class ReportcardComponent implements OnInit {
     return classMap[rating] || ''; // Default to an empty string if no match
   }
   onPrint1(el: ElementRef<HTMLTableElement | HTMLElement>) {
-    this.print.print(el).subscribe(console.log)
+    this.print.print(el).subscribe(console.log);
   }
 }
