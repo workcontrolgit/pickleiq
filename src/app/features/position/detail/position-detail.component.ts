@@ -1,5 +1,5 @@
 import { Logger } from '@core/logger.service';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild  } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,9 +16,8 @@ import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 
 // ui service modal and toaster
 import { ModalService } from '@app/services/modal/modal.service';
-import { ToastService } from '@app/services/toast/toast.service';
 
-import { ToastServiceGlobal } from '@app/services/toast/toaster-service';
+import { ToastService } from '@app/services/toast/toaster-service';
 
 // interface classes
 import { Position } from '@shared/interfaces/position';
@@ -50,6 +49,8 @@ const log = new Logger('Detail');
   ],
 })
 export class PositionDetailComponent implements OnInit {
+  @ViewChild('successTpl') successTpl!: TemplateRef<any>;
+  @ViewChild('dangerTpl') dangerTpl!: TemplateRef<any>;
   isPlaceholderFixed: boolean = false;
   formMode = 'New';
   sub: any;
@@ -65,7 +66,6 @@ export class PositionDetailComponent implements OnInit {
 
   constructor(
     private toastService: ToastService,
-    private toastServiceGlobal: ToastServiceGlobal,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private apiHttpService: ApiHttpService,
@@ -103,7 +103,8 @@ export class PositionDetailComponent implements OnInit {
     // log.debug('onUpdate: ', this.entryForm.value);
     // log.debug('onUpdate: ', this.entryForm.get('positionNumber')!.value);
     this.put(this.entryForm.get('id')!.value, this.entryForm.value);
-    this.showToaster('Great job!', 'Data is updated');
+    this.showSuccess(this.successTpl);
+    // this.showToaster('Great job!', 'Data is updated');
   }
 
   // Handle Delete button click
@@ -147,7 +148,7 @@ export class PositionDetailComponent implements OnInit {
     this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id).subscribe({
       next: (resp: any) => {
         log.debug(resp);
-        this.showToaster('Great job!', 'Data is deleted');
+        this.showDanger(this.dangerTpl);
         this.entryForm.reset();
         this.isAddNew = true;
       },
@@ -161,8 +162,8 @@ export class PositionDetailComponent implements OnInit {
   create(data: any): void {
     this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe({
       next: (resp: any) => {
-        this.id = resp.data; //guid return in data
-        this.showToaster('Great job!', 'Data is inserted');
+        this.id = resp.data;
+        this.showSuccess(this.successTpl);
         this.entryForm.reset();
       },
       error: (error) => {
@@ -224,24 +225,24 @@ export class PositionDetailComponent implements OnInit {
   }
 
   // call modal service
-  showToaster(title: string, message: string) {
-    this.toastService.show(title, message, {
-      classname: 'bg-success text-light',
-      delay: 2000,
-      autohide: true,
-    });
-  }
+  // showToaster(title: string, message: string) {
+  //   this.toastServiceTBD.show(title, message, {
+  //     classname: 'bg-success text-light',
+  //     delay: 2000,
+  //     autohide: true,
+  //   });
+  // }
 
 	showStandard(template: TemplateRef<any>) {
-		this.toastServiceGlobal.show({ template });
+		this.toastService.show({ template });
 	}
 
   showSuccess(template: TemplateRef<any>) {
-		this.toastServiceGlobal.show({ template, classname: 'bg-success text-light', delay: 10000 });
+		this.toastService.show({ template, classname: 'bg-success text-light', delay: 10000 });
 	}
 
 	showDanger(template: TemplateRef<any>) {
-		this.toastServiceGlobal.show({ template, classname: 'bg-danger text-light', delay: 15000 });
+		this.toastService.show({ template, classname: 'bg-danger text-light', delay: 15000 });
 	}
 
   // convenience getter for easy access to form fields

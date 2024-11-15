@@ -7,7 +7,7 @@ export interface Toast {
 }
 
 @Injectable({ providedIn: 'root' })
-export class ToastServiceGlobal {
+export class ToastService {
 	toasts: Toast[] = [];
 
 	show(toast: Toast) {
