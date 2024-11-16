@@ -9,6 +9,7 @@ import { Evaluation } from '@shared/models/evaluation';
 import { Logger } from '@core';
 import { JsonPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 const log = new Logger('EvaluationComponent');
 @Component({
@@ -16,7 +17,7 @@ const log = new Logger('EvaluationComponent');
   templateUrl: './evaluation.component.html',
   styleUrls: ['./evaluation.component.css'],
   standalone: true,
-  imports: [ReactiveFormsModule, FormlyModule, JsonPipe, FormsModule],
+  imports: [ReactiveFormsModule, FormlyModule, JsonPipe, FormsModule, NgbTooltipModule],
 })
 export class EvaluationComponent implements OnInit {
   // ngx formly
@@ -101,16 +102,6 @@ export class EvaluationComponent implements OnInit {
     const modalRef = this.modalService.open(WarningDialogComponent);
   }
 
-  exportToJSON() {
-    const jsonData = JSON.stringify(this.model, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'pickle_skill_evaluation.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
 
   onFileUpload(event: any) {
     const file = event.target.files[0];
@@ -127,14 +118,14 @@ export class EvaluationComponent implements OnInit {
     reader.readAsText(file);
   }
 
-  importFromTextBox() {
-    try {
-      const json = JSON.parse(this.jsonText);
-      this.model = json;
-      this.modelChange.emit(this.model); // Emit the updated model to the parent
-    } catch (e) {
-      console.error('Invalid JSON input');
-    }
-  }
+  // importFromTextBox() {
+  //   try {
+  //     const json = JSON.parse(this.jsonText);
+  //     this.model = json;
+  //     this.modelChange.emit(this.model); // Emit the updated model to the parent
+  //   } catch (e) {
+  //     console.error('Invalid JSON input');
+  //   }
+  // }
 
 }
