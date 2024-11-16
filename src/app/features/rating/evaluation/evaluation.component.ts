@@ -25,6 +25,8 @@ export class EvaluationComponent implements OnInit {
   evaluation: Evaluation;
   evaluations: Evaluation[];
   @Input() model: any;
+  @Output() modelChange = new EventEmitter<any>(); // Emit changes to the parent
+
   active = 1;
 
   options: FormlyFormOptions = {};
@@ -99,38 +101,40 @@ export class EvaluationComponent implements OnInit {
     const modalRef = this.modalService.open(WarningDialogComponent);
   }
 
-  // exportToJSON() {
-  //   const jsonData = JSON.stringify(this.model, null, 2);
-  //   const blob = new Blob([jsonData], { type: 'application/json' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = 'pickle_skill_evaluation.json';
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // }
+  exportToJSON() {
+    const jsonData = JSON.stringify(this.model, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'pickle_skill_evaluation.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
-  // onFileUpload(event: any) {
-  //   const file = event.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     try {
-  //       const json = JSON.parse(reader.result as string);
-  //       this.model = json;
-  //     } catch (e) {
-  //       console.error('Invalid JSON file');
-  //     }
-  //   };
-  //   reader.readAsText(file);
-  // }
+  onFileUpload(event: any) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const json = JSON.parse(reader.result as string);
+        this.model = json;
+        this.modelChange.emit(this.model); // Emit the updated model to the parent
+      } catch (e) {
+        console.error('Invalid JSON file');
+      }
+    };
+    reader.readAsText(file);
+  }
 
-  // importFromTextBox() {
-  //   try {
-  //     const json = JSON.parse(this.jsonText);
-  //     this.model = json;
-  //   } catch (e) {
-  //     console.error('Invalid JSON input');
-  //   }
-  // }
+  importFromTextBox() {
+    try {
+      const json = JSON.parse(this.jsonText);
+      this.model = json;
+      this.modelChange.emit(this.model); // Emit the updated model to the parent
+    } catch (e) {
+      console.error('Invalid JSON input');
+    }
+  }
 
 }
