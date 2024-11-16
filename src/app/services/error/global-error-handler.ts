@@ -14,6 +14,6 @@ export class GlobalErrorHandler implements ErrorHandler {
     }
     this.zone.run(() => this.errorDialogService.openDialog(error?.message || 'Undefined client error', error?.status));
 
-    console.error('Error from global error handler', error);
+    console.error('Error from global error handler', error?.message);
   }
 }

@@ -1,0 +1,17 @@
+@for (toast of toastService.toasts; track toast) {
+  <ngb-toast
+    [class]="toast.classname"
+    [header]="toast.header"
+    [autohide]="true"
+    [delay]="toast.delay || 5000"
+    (hidden)="show = false"
+  >
+  @if (isTemplate(toast)) {
+    <ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>
+    } @else {
+    {{ toast.textOrTpl }}
+    }
+
+    <!-- <ng-template [ngTemplateOutlet]="toast.template"></ng-template> -->
+  </ngb-toast>
+}

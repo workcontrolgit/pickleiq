@@ -16,7 +16,7 @@ export const environment = {
   serverUrl: '/api',
   defaultLanguage: 'en-US',
   supportedLanguages: ['en-US'],
-  debug: true,
+  loadSampleData: false,
   //REST API server
   apiEndpoint: 'https://localhost:44378/api/v1',
   //Api_Endpoint: 'https://cat-netcore-api.azurewebsites.net/api/v1',
@@ -73,7 +73,7 @@ export const environment = {
     clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
     nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by IdentityServer's URI encoding
   },
-  modelDebug: {
+  sampleModel: {
     level: '4.0',
     playername: 'Fuji Nguyen',
     playeremail: 'fuji.nguyen@workcontrol.com',

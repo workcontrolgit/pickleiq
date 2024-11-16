@@ -4,12 +4,37 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="d-flex mt-3">
+      <button type="submit" class="btn btn-primary me-2">Submit</button>
+    </div>
   </form>
 </div>
 
-<!-- <pre>Active: {{ active }}</pre> -->
+
+<div class="mt-4">
+  <h2 class="h5">Actions</h2>
+  <div class="d-flex flex-wrap gap-2">
+    <button class="btn btn-success" (click)="exportToJSON()">Export to JSON</button>
+    <label class="btn btn-secondary">
+      Import from File
+      <input type="file" (change)="onFileUpload($event)" hidden />
+    </label>
+    <button class="btn btn-info" (click)="importFromTextBox()">Import from Text Box</button>
+  </div>
+</div>
+
+<div class="mt-4">
+  <h2 class="h5">Paste JSON Data</h2>
+  <textarea
+    [(ngModel)]="jsonText"
+    class="form-control"
+    placeholder="Paste JSON here"
+    rows="6"
+  ></textarea>
+</div>
+
 
 @if (debug) {
-<p>{{ model | json }}</p>
+<p>Model: {{ model | json }}</p>
+<pre>Active: {{ active }}</pre>
 }

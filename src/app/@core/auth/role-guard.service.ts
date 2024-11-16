@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, Route } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-import { ToastService } from '@app/services/dialog/toast.service';
+
+import { ToastService } from '@app/services/toast/toaster-service';
 
 @Injectable()
 export class RoleGuard {
@@ -40,11 +41,9 @@ export class RoleGuard {
 
   // ngbmodal service
   showToaster(title: string, message: string) {
-    this.toastService.show(message, {
-      classname: 'bg-danger text-light',
-      delay: 2000,
-      autohide: true,
-      headertext: title,
-    });
+    this.toastService.show({ textOrTpl: "Record has been updated.", classname: 'bg-success text-light', delay: 10000 });
+
+		// this.toastService.show({ textOrTpl: message, classname: 'bg-danger text-light', delay: 15000, header: title });
+
   }
 }

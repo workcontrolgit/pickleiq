@@ -1,5 +1,5 @@
 import { Logger } from '@core/logger.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild  } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,7 +16,8 @@ import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 
 // ui service modal and toaster
 import { ModalService } from '@app/services/modal/modal.service';
-import { ToastService } from '@app/services/toast/toast.service';
+
+import { ToastService } from '@app/services/toast/toaster-service';
 
 // interface classes
 import { Position } from '@shared/interfaces/position';
@@ -48,6 +49,10 @@ const log = new Logger('Detail');
   ],
 })
 export class PositionDetailComponent implements OnInit {
+  // @ViewChild('successTpl') successTpl!: TemplateRef<any>;
+  // @ViewChild('dangerTpl') dangerTpl!: TemplateRef<any>;
+  // @ViewChild('standardTpl') standardTpl!: TemplateRef<any>;
+  isPlaceholderFixed: boolean = false;
   formMode = 'New';
   sub: any;
   id: any;
@@ -157,7 +162,7 @@ export class PositionDetailComponent implements OnInit {
   create(data: any): void {
     this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe({
       next: (resp: any) => {
-        this.id = resp.data; //guid return in data
+        this.id = resp.data;
         this.showToaster('Great job!', 'Data is inserted');
         this.entryForm.reset();
       },
@@ -219,13 +224,22 @@ export class PositionDetailComponent implements OnInit {
     });
   }
 
-  // call modal service
+	// showStandard(template: TemplateRef<any>) {
+	// 	this.toastService.show({ textOrTpl: template });
+	// }
+
+
+  // showSuccess(template: TemplateRef<any>) {
+	// 	this.toastService.show({ textOrTpl: "Record has been updated.", classname: 'bg-success text-light', delay: 10000 });
+	// }
+
+	// showDanger(template: TemplateRef<any>) {
+	// 	this.toastService.show({ textOrTpl: template, classname: 'bg-danger text-light', delay: 15000 });
+	// }
+
+  // call toaster service
   showToaster(title: string, message: string) {
-    this.toastService.show(title, message, {
-      classname: 'bg-success text-light',
-      delay: 2000,
-      autohide: true,
-    });
+    this.toastService.show({ textOrTpl: message, classname: 'bg-success text-light', delay: 2000, header: title });
   }
 
   // convenience getter for easy access to form fields
