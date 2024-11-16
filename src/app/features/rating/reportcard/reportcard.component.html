@@ -6,14 +6,9 @@
       <h4 class="text-secondary">Pickleball Report Card</h4>
     </div>
     <div class="ml-auto">
-      <!-- Component -->
-      <!-- <ngx-print-element #element="element">
-      <button (click)="element?.print(tableElement)" class="btn btn-link m-1">Print</button>
-    </ngx-print-element> -->
-
-      <!-- Service -->
-      <button (click)="onPrint1(tableElement)" class="btn btn-link m-1 print-none">Print</button>
-      <!-- <button [print]="['printSection']" class="btn btn-link m-1 print-none">Print</button> -->
+      <!-- ngx-print-element service -->
+      <button (click)="onPrint1(tableElement)" class="btn btn-link m-1 print-none" ngbTooltip="Print the report card as a PDF document">Print PDF</button>
+      <button class="btn btn-link m-1 print-none" (click)="exportToJSON()" ngbTooltip="Save the evaluation data locally as a file">Save Evaluation</button>
     </div>
   </div>
 

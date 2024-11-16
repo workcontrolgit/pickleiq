@@ -1,27 +1,30 @@
 <div class="container-fluid">
-  <h4 class="text-secondary">Evaluation Form</h4>
+
+  <div class="d-flex justify-content-between">
+    <div>
+      <h4 class="text-secondary">Evaluation Form</h4>
+    </div>
+    <div class="ml-auto">
+      <!-- ngx-print-element service -->
+      <label class="btn btn-link m-1 print-none" ngbTooltip="Upload evaluation data from a local file">
+        Upload Evaluation
+        <input type="file" (change)="onFileUpload($event)" hidden />
+      </label>
+    </div>
+  </div>
+
   <p class="fst-italic">Fields marked with * are required.</p>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <formly-form [model]="model" [fields]="fields" [options]="options" [form]="form"></formly-form>
     <div class="d-flex mt-3">
-      <button type="submit" class="btn btn-primary me-2">Submit</button>
+      <button type="submit" class="btn btn-primary me-2" ngbTooltip="Submit the form and save changes">Submit</button>
     </div>
   </form>
 </div>
 
 
-<div class="mt-4">
-  <h2 class="h5">Actions</h2>
-  <div class="d-flex flex-wrap gap-2">
-    <button class="btn btn-success" (click)="exportToJSON()">Export to JSON</button>
-    <label class="btn btn-secondary">
-      Import from File
-      <input type="file" (change)="onFileUpload($event)" hidden />
-    </label>
-    <button class="btn btn-info" (click)="importFromTextBox()">Import from Text Box</button>
-  </div>
-</div>
+<!-- 
 
 <div class="mt-4">
   <h2 class="h5">Paste JSON Data</h2>
@@ -31,7 +34,7 @@
     placeholder="Paste JSON here"
     rows="6"
   ></textarea>
-</div>
+</div> -->
 
 
 @if (debug) {

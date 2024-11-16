@@ -4,6 +4,8 @@ import { FormfieldControlService } from '@app/services/form/formfield-control.se
 import { Router } from '@angular/router';
 import { NgFor, NgClass, DatePipe, JsonPipe } from '@angular/common';
 
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { Logger } from '@core/logger.service';
 const log = new Logger('ReportcardComponent');
 
@@ -16,7 +18,7 @@ type TypeSkillRating = Array<{ Skillcode: string; Description: string; Rating: s
   templateUrl: './reportcard.component.html',
   styleUrls: ['./reportcard.component.css'],
   standalone: true,
-  imports: [NgxPrintElementComponent, NgxPrintElementDirective, NgFor, NgClass, DatePipe, JsonPipe],
+  imports: [NgxPrintElementComponent, NgxPrintElementDirective, NgFor, NgClass, DatePipe, JsonPipe, NgbTooltipModule],
 })
 export class ReportcardComponent implements OnInit {
   @ViewChild('tableRef') tableElement!: ElementRef<HTMLTableElement>;
@@ -101,4 +103,22 @@ export class ReportcardComponent implements OnInit {
   onPrint1(el: ElementRef<HTMLTableElement | HTMLElement>) {
     this.print.print(el).subscribe(console.log);
   }
+
+  exportToJSON() {
+    const playerName = (this.model.playername || 'Unknown_Player').replace(/\s+/g, '_');
+    const assessmentDate = this.model.assessmentDate || 'Unknown_Date';
+    const formattedDate = assessmentDate.replace(/-/g, ''); // Remove hyphens for file name
+    const fileName = `${playerName}_${formattedDate}_evaluation.json`;
+
+    const jsonData = JSON.stringify(this.model, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    // a.download = 'pickle_skill_evaluation.json';
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
 }

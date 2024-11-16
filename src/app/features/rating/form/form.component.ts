@@ -68,40 +68,6 @@ export class FormComponent implements OnInit {
     }
   }
 
-  // exportToJSON() {
-  //   const jsonData = JSON.stringify(this.model, null, 2);
-  //   const blob = new Blob([jsonData], { type: 'application/json' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = 'pickle_skill_evaluation.json';
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // }
-
-  // onFileUpload(event: any) {
-  //   const file = event.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     try {
-  //       const json = JSON.parse(reader.result as string);
-  //       this.model = json;
-  //     } catch (e) {
-  //       console.error('Invalid JSON file');
-  //     }
-  //   };
-  //   reader.readAsText(file);
-  // }
-
-  // importFromTextBox() {
-  //   try {
-  //     const json = JSON.parse(this.jsonText);
-  //     this.model = json;
-  //   } catch (e) {
-  //     console.error('Invalid JSON input');
-  //   }
-  // }
-
   // Function to determine if Actions and Paste JSON sections should be shown
   shouldShowActions(): boolean {
     return this.active !== 2; // Hide these sections when active tab is "2"
