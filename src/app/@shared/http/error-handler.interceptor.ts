@@ -4,8 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
-import { Logger } from '../logger.service';
-import { ToastServiceTBD } from '@app/services/toast/toast.service';
+import { Logger } from '@core/logger.service';
 import { ModalService } from '@app/services/modal/modal.service';
 
 const log = new Logger('ErrorHandlerInterceptor');

@@ -1,10 +1,11 @@
 import { Component, ElementRef, ViewChild, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { FormfieldControlService } from '@app/services/form/formfield-control.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { NgFor, NgClass, DatePipe } from '@angular/common';
-// import { Config, NgxPrintElementComponent, NgxPrintElementService, NgxPrintElementDirective, NgxPrintElementModule } from 'ngx-print-element';
+import { Router } from '@angular/router';
+import { NgFor, NgClass, DatePipe, JsonPipe } from '@angular/common';
+
+import { Logger } from '@core/logger.service';
+const log = new Logger('ReportcardComponent');
 
 import { Config, NgxPrintElementComponent, NgxPrintElementService, NgxPrintElementDirective } from 'ngx-print-element';
 
@@ -15,7 +16,7 @@ type TypeSkillRating = Array<{ Skillcode: string; Description: string; Rating: s
   templateUrl: './reportcard.component.html',
   styleUrls: ['./reportcard.component.css'],
   standalone: true,
-  imports: [NgxPrintElementComponent, NgxPrintElementDirective, NgFor, NgClass, DatePipe],
+  imports: [NgxPrintElementComponent, NgxPrintElementDirective, NgFor, NgClass, DatePipe, JsonPipe],
 })
 export class ReportcardComponent implements OnInit {
   @ViewChild('tableRef') tableElement!: ElementRef<HTMLTableElement>;
@@ -65,6 +66,9 @@ export class ReportcardComponent implements OnInit {
     var rating: string;
     var evalString: string;
     var filterLevel: string;
+
+    log.error(this.model);
+
 
     filterLevel = this.model['level'];
 

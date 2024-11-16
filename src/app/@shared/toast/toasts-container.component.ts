@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, TemplateRef } from '@angular/core';
 
 import { ToastService } from '../../services/toast/toaster-service';
+import { Toast } from '../../services/toast/toaster-service';
 import { NgTemplateOutlet } from '@angular/common';
 import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -13,4 +14,9 @@ import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ToastsContainer {
 	toastService = inject(ToastService);
+  show = true;
+
+  isTemplate(toast: Toast) {
+    return toast.textOrTpl instanceof TemplateRef;
+  }
 }

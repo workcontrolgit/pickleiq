@@ -1,9 +1,10 @@
 import { Injectable, TemplateRef } from '@angular/core';
 
 export interface Toast {
-	template: TemplateRef<any>;
+	textOrTpl: string | TemplateRef<any>;
 	classname?: string;
 	delay?: number;
+	header?: string;
 }
 
 @Injectable({ providedIn: 'root' })

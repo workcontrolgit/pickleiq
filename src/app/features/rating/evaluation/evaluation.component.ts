@@ -8,14 +8,15 @@ import { WarningDialogComponent } from '@app/@shared/components/warning-dialog/w
 import { Evaluation } from '@shared/models/evaluation';
 import { Logger } from '@core';
 import { JsonPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
 
-const log = new Logger('Evaluation');
+const log = new Logger('EvaluationComponent');
 @Component({
   selector: 'app-evaluation',
   templateUrl: './evaluation.component.html',
   styleUrls: ['./evaluation.component.css'],
   standalone: true,
-  imports: [ReactiveFormsModule, FormlyModule, JsonPipe],
+  imports: [ReactiveFormsModule, FormlyModule, JsonPipe, FormsModule],
 })
 export class EvaluationComponent implements OnInit {
   // ngx formly
@@ -33,11 +34,16 @@ export class EvaluationComponent implements OnInit {
   debug: boolean = false;
   level: any;
 
+  jsonText: string = '';
+
   @Output() ValidEvaluationEvent = new EventEmitter<boolean>();
 
   constructor(private serviceFormFields: FormfieldSkillRatingService, private modalService: NgbModal) {}
 
   ngOnInit() {
+
+    log.error(this.model);
+
     var skillLevel = this.model['level'];
 
     var instructions: string;
@@ -81,6 +87,7 @@ export class EvaluationComponent implements OnInit {
   }
 
   submit() {
+    log.error(this.model);
     if (this.form.invalid) {
       this.open();
     } else {
@@ -91,4 +98,39 @@ export class EvaluationComponent implements OnInit {
   open() {
     const modalRef = this.modalService.open(WarningDialogComponent);
   }
+
+  // exportToJSON() {
+  //   const jsonData = JSON.stringify(this.model, null, 2);
+  //   const blob = new Blob([jsonData], { type: 'application/json' });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = 'pickle_skill_evaluation.json';
+  //   a.click();
+  //   URL.revokeObjectURL(url);
+  // }
+
+  // onFileUpload(event: any) {
+  //   const file = event.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     try {
+  //       const json = JSON.parse(reader.result as string);
+  //       this.model = json;
+  //     } catch (e) {
+  //       console.error('Invalid JSON file');
+  //     }
+  //   };
+  //   reader.readAsText(file);
+  // }
+
+  // importFromTextBox() {
+  //   try {
+  //     const json = JSON.parse(this.jsonText);
+  //     this.model = json;
+  //   } catch (e) {
+  //     console.error('Invalid JSON input');
+  //   }
+  // }
+
 }

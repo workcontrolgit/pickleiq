@@ -49,8 +49,9 @@ const log = new Logger('Detail');
   ],
 })
 export class PositionDetailComponent implements OnInit {
-  @ViewChild('successTpl') successTpl!: TemplateRef<any>;
-  @ViewChild('dangerTpl') dangerTpl!: TemplateRef<any>;
+  // @ViewChild('successTpl') successTpl!: TemplateRef<any>;
+  // @ViewChild('dangerTpl') dangerTpl!: TemplateRef<any>;
+  // @ViewChild('standardTpl') standardTpl!: TemplateRef<any>;
   isPlaceholderFixed: boolean = false;
   formMode = 'New';
   sub: any;
@@ -103,8 +104,7 @@ export class PositionDetailComponent implements OnInit {
     // log.debug('onUpdate: ', this.entryForm.value);
     // log.debug('onUpdate: ', this.entryForm.get('positionNumber')!.value);
     this.put(this.entryForm.get('id')!.value, this.entryForm.value);
-    this.showSuccess(this.successTpl);
-    // this.showToaster('Great job!', 'Data is updated');
+    this.showToaster('Great job!', 'Data is updated');
   }
 
   // Handle Delete button click
@@ -148,7 +148,7 @@ export class PositionDetailComponent implements OnInit {
     this.apiHttpService.delete(this.apiEndpointsService.deletePositionByIdEndpoint(id), id).subscribe({
       next: (resp: any) => {
         log.debug(resp);
-        this.showDanger(this.dangerTpl);
+        this.showToaster('Great job!', 'Data is deleted');
         this.entryForm.reset();
         this.isAddNew = true;
       },
@@ -163,7 +163,7 @@ export class PositionDetailComponent implements OnInit {
     this.apiHttpService.post(this.apiEndpointsService.postPositionsEndpoint(), data).subscribe({
       next: (resp: any) => {
         this.id = resp.data;
-        this.showSuccess(this.successTpl);
+        this.showToaster('Great job!', 'Data is inserted');
         this.entryForm.reset();
       },
       error: (error) => {
@@ -224,26 +224,23 @@ export class PositionDetailComponent implements OnInit {
     });
   }
 
-  // call modal service
-  // showToaster(title: string, message: string) {
-  //   this.toastServiceTBD.show(title, message, {
-  //     classname: 'bg-success text-light',
-  //     delay: 2000,
-  //     autohide: true,
-  //   });
-  // }
+	// showStandard(template: TemplateRef<any>) {
+	// 	this.toastService.show({ textOrTpl: template });
+	// }
 
-	showStandard(template: TemplateRef<any>) {
-		this.toastService.show({ template });
-	}
 
-  showSuccess(template: TemplateRef<any>) {
-		this.toastService.show({ template, classname: 'bg-success text-light', delay: 10000 });
-	}
+  // showSuccess(template: TemplateRef<any>) {
+	// 	this.toastService.show({ textOrTpl: "Record has been updated.", classname: 'bg-success text-light', delay: 10000 });
+	// }
 
-	showDanger(template: TemplateRef<any>) {
-		this.toastService.show({ template, classname: 'bg-danger text-light', delay: 15000 });
-	}
+	// showDanger(template: TemplateRef<any>) {
+	// 	this.toastService.show({ textOrTpl: template, classname: 'bg-danger text-light', delay: 15000 });
+	// }
+
+  // call toaster service
+  showToaster(title: string, message: string) {
+    this.toastService.show({ textOrTpl: message, classname: 'bg-success text-light', delay: 2000, header: title });
+  }
 
   // convenience getter for easy access to form fields
   get f() {
