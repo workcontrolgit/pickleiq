@@ -8,7 +8,9 @@ import { EvaluationComponent } from '../evaluation/evaluation.component';
 import { NgbNav, NgbNavItem, NgbNavLink, NgbNavContent, NgbNavOutlet } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@env/environment';
 
-const log = new Logger('Evaluation');
+import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
+
+const log = new Logger('FormComponent');
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
@@ -23,6 +25,7 @@ const log = new Logger('Evaluation');
     ReportcardComponent,
     NgbNavOutlet,
     JsonPipe,
+    FormsModule,
   ],
 })
 export class FormComponent implements OnInit {
@@ -32,45 +35,13 @@ export class FormComponent implements OnInit {
   // evaluation: Evaluation;
   // evaluations: Evaluation[];
   model: any;
-  active: number;
+  active: number = 1;
   disabled = true;
 
   debug: boolean;
 
-  //level: any;
+  jsonText: string = '';
 
-  // modelDebug = {
-  //   level: '4.0',
-  //   playername: 'Fuji Nguyen',
-  //   playeremail: 'fuji.nguyen@workcontrol.com',
-  //   assessmentDate: '2022-10-24',
-  //   '40-1': 'D',
-  //   '40-2': 'A',
-  //   '40-3': 'A',
-  //   '40-4': 'A',
-  //   '40-5': 'A',
-  //   '40-6': 'A',
-  //   '40-7': 'A',
-  //   '40-8': 'A',
-  //   '40-9': 'A',
-  //   '40-10': 'A',
-  //   '40-11': 'A',
-  //   '40-12': 'D',
-  //   '40-13': 'A',
-  //   '40-14': 'B',
-  //   '40-15': 'A',
-  //   '40-16': 'A',
-  //   '40-17': 'A',
-  //   '40-18': 'A',
-  //   '40-19': 'B',
-  //   '40-20': 'A',
-  //   '40-21': 'A',
-  //   '40-22': 'C',
-  //   evaluatorname: 'Emily Nguyen',
-  //   evaluatoremail: 'emily@gmail.com',
-  //   Notes: 'Lefty user',
-  //   terms: true,
-  // };
 
   constructor(private activatedRoute: ActivatedRoute) {
     this.activatedRoute.data.subscribe((data) => {
@@ -86,11 +57,26 @@ export class FormComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    log.error(this.model);
+
     // set the debug from environment
-    this.debug = environment.debug;
+    this.debug = environment.loadSampleData;
     // If debug true, load data from sample data modelDebug
     if (this.debug) {
-      this.model = environment.modelDebug; // this.modelDebug;
+      this.model = environment.sampleModel; // this.modelDebug;
     }
   }
+
+  // Function to determine if Actions and Paste JSON sections should be shown
+  shouldShowActions(): boolean {
+    return this.active !== 2; // Hide these sections when active tab is "2"
+  }
+
+  // Handle the model update from the child component
+  updateModel(updatedModel: any) {
+    this.model = updatedModel; // Update the parent model
+    console.log('Parent Model Updated:', this.model);
+  }
+
 }

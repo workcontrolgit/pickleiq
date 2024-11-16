@@ -26,6 +26,10 @@ const routes: Routes = [
       path: 'training',
       loadChildren: () => import('./features/training/training.module').then((m) => m.TraininghModule),
     },
+    {
+      path: 'position',
+      loadChildren: () => import('./features/position/position.module').then((m) => m.PositionModule),
+    },
   ]),
 
   { path: 'should-login', component: ShouldLoginComponent },

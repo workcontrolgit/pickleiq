@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
+import { ErrorDialogComponent } from './error-dialog.component';
 
 @Injectable({
   providedIn: 'root',

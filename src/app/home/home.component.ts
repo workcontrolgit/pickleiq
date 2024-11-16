@@ -3,6 +3,7 @@ import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Logger } from '@core';
 import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
 import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 const log = new Logger('app-home');
 
@@ -12,7 +13,7 @@ const log = new Logger('app-home');
   styleUrls: ['./home.component.scss'],
   providers: [NgbCarouselConfig],
   standalone: true,
-  imports: [RouterLink, ShareButtonsModule],
+  imports: [RouterLink, ShareButtonsModule, TranslateModule],
 })
 export class HomeComponent implements OnInit {
   showNavigationArrows = true;

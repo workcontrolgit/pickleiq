@@ -46,6 +46,20 @@ export class ApiEndpointsService {
 
   public invalidUrlEndpoint = (): string => this.createUrl('invalidurl', true);
 
+  // TALENT MANAGEMENT
+  // call Positions endpoint
+  public getPositionByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
+  public deletePositionByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
+  public postPositionsPagedEndpoint = (): string => this.createUrl('Positions/Paged');
+  public postPositionsEndpoint = (): string => this.createUrl('Positions');
+  public putPositionsEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
+  // call Employees endpoint
+  public postEmployeesPagedEndpoint = (): string => this.createUrl('Employees/Paged');
+  // call Departments endpoint
+  public getDepartmentsEndpoint = (): string => this.createUrl('Departments');
+  // call SalaryRanges endpoint
+  public getSalaryRangesEndpoint = (): string => this.createUrl('SalaryRanges');
+
   // call regular endpoint without boolean true at end
   public getPersonsEndpoint = (): string => this.createUrl('Persons');
 
@@ -66,19 +80,12 @@ export class ApiEndpointsService {
 
   // call Positions endpoint
 
-  public getPositionByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
-
-  public deletePositionByIdEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
-
   public postPersonsEndpoint = (): string => this.createUrl('', true);
 
   // call regular endpoint without boolean true at end
   // https://localhost:44378/api/v1 (ASP.NET CORE REST API.  Repo https://github.com/workcontrolgit/AngularNgxDataTableBackend)
-  public postPositionsPagedEndpoint = (): string => this.createUrl('Positions/Paged');
 
-  public postPositionsEndpoint = (): string => this.createUrl('Positions');
-
-  public putPositionsPagedEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
+  // public putPositionsPagedEndpoint = (id: string): string => this.createUrlWithPathVariables('Positions', [id]);
 
   /* #endregion */
 

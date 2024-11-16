@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
-import { ToastService } from '@app/services/dialog/toast.service';
+
+import { ToastService } from '@app/services/toast/toaster-service';
 
 @Injectable()
 export class AuthGuard {
@@ -25,11 +26,6 @@ export class AuthGuard {
 
   // ngbmodal service
   showToaster(title: string, message: string) {
-    this.toastService.show(message, {
-      classname: 'bg-danger text-light',
-      delay: 2000,
-      autohide: true,
-      headertext: title,
-    });
+    this.toastService.show({ textOrTpl: message, classname: 'bg-danger text-light', delay: 15000, header: title });
   }
 }
