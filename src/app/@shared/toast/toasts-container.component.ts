@@ -1,7 +1,7 @@
 import { Component, inject, TemplateRef } from '@angular/core';
 
-import { ToastService } from '../../services/toast/toaster-service';
-import { Toast } from '../../services/toast/toaster-service';
+import { ToastService } from '@app/services/toast/toaster-service';
+import { Toast } from '@app/services/toast/toaster-service';
 import { NgTemplateOutlet } from '@angular/common';
 import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 
