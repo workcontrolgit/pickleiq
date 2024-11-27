@@ -37,11 +37,7 @@ export class FormComponent implements OnInit {
   model: any;
   active: number = 1;
   disabled = true;
-
   debug: boolean;
-
-  jsonText: string = '';
-
 
   constructor(private activatedRoute: ActivatedRoute) {
     this.activatedRoute.data.subscribe((data) => {
@@ -56,21 +52,33 @@ export class FormComponent implements OnInit {
     this.disabled = !isValidForm;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.logModel();
+    this.applyDebugMode();
+  }
 
+  private logModel(): void {
     log.error(this.model);
+  }
 
-    // set the debug from environment
+  private applyDebugMode(): void {
     this.debug = environment.loadSampleData;
-    // If debug true, load data from sample data modelDebug
+
     if (this.debug) {
-      this.model = environment.sampleModel; // this.modelDebug;
+      this.model = this.getUpdatedModel();
     }
   }
 
-  // Function to determine if Actions and Paste JSON sections should be shown
-  shouldShowActions(): boolean {
-    return this.active !== 2; // Hide these sections when active tab is "2"
+  private getUpdatedModel(): any {
+    const skillLevel = this.model?.['level']; // Safe access to avoid potential errors
+    return this.updateModelBasedOnSkillLevel(skillLevel);
+  }
+
+  private updateModelBasedOnSkillLevel(skillLevel: string): any {
+    if (skillLevel === '4.0') {
+      return environment.sampleModel40; // load sample data
+    }
+    return this.model; // Default: return the original model
   }
 
   // Handle the model update from the child component
@@ -78,5 +86,4 @@ export class FormComponent implements OnInit {
     this.model = updatedModel; // Update the parent model
     console.log('Parent Model Updated:', this.model);
   }
-
 }
