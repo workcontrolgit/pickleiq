@@ -1,12 +1,12 @@
 {
 	"folders": [
 		{
-			"name": "cat-toolkit-angular-mickleball",
+			"name": "cat-toolkit-angular-PickleIQ",
 			"path": "."
 		}
 	],
 	"settings": {
-		"appService.defaultWebAppToDeploy": "/subscriptions/7d4355af-9f71-4123-8a18-aa68dc430bbf/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/Mickleball",
+		"appService.defaultWebAppToDeploy": "/subscriptions/7d4355af-9f71-4123-8a18-aa68dc430bbf/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/PickleIQ",
 		"appService.deploySubpath": "dist",
 		"cflint.enabled": false
 	}
