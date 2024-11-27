@@ -69,7 +69,7 @@ export const environment = {
     clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
     nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by IdentityServer's URI encoding
   },
-  sampleModel: {
+  sampleModel40: {
     level: '4.0',
     playername: 'Fuji Nguyen',
     playeremail: 'fuji.nguyen@workcontrol.com',
