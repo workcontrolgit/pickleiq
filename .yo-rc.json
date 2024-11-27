@@ -8,7 +8,7 @@
       "skipQuickstart": false,
       "initGit": true,
       "usePrefix": true,
-      "appName": "Mickleball",
+      "appName": "PickleIQ",
       "target": ["web"],
       "pwa": true,
       "ui": "bootstrap",
@@ -21,7 +21,7 @@
       "tools": ["prettier", "hads"],
       "utility": [],
       "deploy": "none",
-      "projectName": "Mickleball",
+      "projectName": "PickleIQ",
       "packageManager": "npm",
       "mobile": [],
       "desktop": []
