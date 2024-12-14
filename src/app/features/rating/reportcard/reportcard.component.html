@@ -7,8 +7,20 @@
     </div>
     <div class="ml-auto">
       <!-- ngx-print-element service -->
-      <button (click)="onPrint1(tableElement)" class="btn btn-link m-1 print-none" ngbTooltip="Print the report card as a PDF document">Print PDF</button>
-      <button class="btn btn-link m-1 print-none" (click)="exportToJSON()" ngbTooltip="Save the evaluation data locally as a file">Download Evaluation</button>
+      <button
+        (click)="onPrint1(tableElement)"
+        class="btn btn-link m-1 print-none"
+        ngbTooltip="Print the report card as a PDF document"
+      >
+        Print PDF
+      </button>
+      <button
+        class="btn btn-link m-1 print-none"
+        (click)="exportToJSON()"
+        ngbTooltip="Save the evaluation data locally as a file"
+      >
+        Download Evaluation
+      </button>
     </div>
   </div>
 
@@ -77,5 +89,3 @@
     </ul>
   </div>
 </div>
-
-

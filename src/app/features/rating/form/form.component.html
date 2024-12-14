@@ -5,7 +5,11 @@
     <li [ngbNavItem]="1">
       <a ngbNavLink>Evaluation</a>
       <ng-template ngbNavContent>
-        <app-evaluation [model]="model" (modelChange)="updateModel($event)" (ValidEvaluationEvent)="selectTab($event)"></app-evaluation>
+        <app-evaluation
+          [model]="model"
+          (modelChange)="updateModel($event)"
+          (ValidEvaluationEvent)="selectTab($event)"
+        ></app-evaluation>
       </ng-template>
     </li>
     <li [ngbNavItem]="2" [disabled]="disabled">
@@ -18,12 +22,8 @@
 
   <!-- Content output -->
   <div [ngbNavOutlet]="nav" class="mt-2"></div>
-
-  </div>
-
-
+</div>
 
 @if (debug) {
 <p>{{ model | json }}</p>
 }
-

@@ -41,9 +41,8 @@ export class RoleGuard {
 
   // ngbmodal service
   showToaster(title: string, message: string) {
-    this.toastService.show({ textOrTpl: "Record has been updated.", classname: 'bg-success text-light', delay: 10000 });
+    this.toastService.show({ textOrTpl: 'Record has been updated.', classname: 'bg-success text-light', delay: 10000 });
 
-		// this.toastService.show({ textOrTpl: message, classname: 'bg-danger text-light', delay: 15000, header: title });
-
+    // this.toastService.show({ textOrTpl: message, classname: 'bg-danger text-light', delay: 15000, header: title });
   }
 }

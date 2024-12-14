@@ -1,5 +1,5 @@
 import { Logger } from '@core/logger.service';
-import { Component, OnInit, TemplateRef, ViewChild  } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -224,18 +224,17 @@ export class PositionDetailComponent implements OnInit {
     });
   }
 
-	// showStandard(template: TemplateRef<any>) {
-	// 	this.toastService.show({ textOrTpl: template });
-	// }
-
+  // showStandard(template: TemplateRef<any>) {
+  // 	this.toastService.show({ textOrTpl: template });
+  // }
 
   // showSuccess(template: TemplateRef<any>) {
-	// 	this.toastService.show({ textOrTpl: "Record has been updated.", classname: 'bg-success text-light', delay: 10000 });
-	// }
+  // 	this.toastService.show({ textOrTpl: "Record has been updated.", classname: 'bg-success text-light', delay: 10000 });
+  // }
 
-	// showDanger(template: TemplateRef<any>) {
-	// 	this.toastService.show({ textOrTpl: template, classname: 'bg-danger text-light', delay: 15000 });
-	// }
+  // showDanger(template: TemplateRef<any>) {
+  // 	this.toastService.show({ textOrTpl: template, classname: 'bg-danger text-light', delay: 15000 });
+  // }
 
   // call toaster service
   showToaster(title: string, message: string) {

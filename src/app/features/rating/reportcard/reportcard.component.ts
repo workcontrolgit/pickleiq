@@ -71,7 +71,6 @@ export class ReportcardComponent implements OnInit {
 
     log.error(this.model);
 
-
     filterLevel = this.model['level'];
 
     objSkillByLevel = this.formfieldControlService.LstSkillcode(filterLevel);
@@ -120,5 +119,4 @@ export class ReportcardComponent implements OnInit {
     a.click();
     URL.revokeObjectURL(url);
   }
-
 }
