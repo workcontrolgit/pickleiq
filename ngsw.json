@@ -1,0 +1,109 @@
+{
+  "configVersion": 1,
+  "timestamp": 1734194793197,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/153.8292d1faef9adc6b.js",
+        "/225.da8bb926a4b0ee8a.js",
+        "/631.4b1886d29f8baedf.js",
+        "/651.5f76e24060ec5217.js",
+        "/690.339b06a8e1f28a0f.js",
+        "/708.5ef4d631628ad2be.js",
+        "/favicon.ico",
+        "/index.html",
+        "/main.619f9119f90c5958.js",
+        "/manifest.webmanifest",
+        "/polyfills.9352ce6aa3c06102.js",
+        "/runtime.725ddb09db16b2f2.js",
+        "/scripts.d90277730e222d77.js",
+        "/styles.49194ecad344372c.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/apple-touch-icon.png",
+        "/assets/cert/localhost-key.pem",
+        "/assets/cert/localhost.pem",
+        "/assets/favicon-32x32.png",
+        "/assets/icons8-angularjs.svg",
+        "/assets/ngx-rocket-logo.png",
+        "/assets/ngx-rocket-logo@192.png",
+        "/bootstrap-icons.35e09da2aecdd969.woff2",
+        "/bootstrap-icons.cb4c7c05f3292543.woff",
+        "/fa-brands-400.1342812213307936.ttf",
+        "/fa-brands-400.60e5c9d38b143ff0.woff2",
+        "/fa-regular-400.6f7d0aec71887524.woff2",
+        "/fa-regular-400.d151c40a03a8a2ce.ttf",
+        "/fa-solid-900.bd6c2137b5c6cc45.ttf",
+        "/fa-solid-900.cece584ee568dd5d.woff2"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/153.8292d1faef9adc6b.js": "04ac0342433f780690775ea62f58bda34192f3c0",
+    "/225.da8bb926a4b0ee8a.js": "ed1662b492d030b951adcb3190f24b693ac5fe67",
+    "/631.4b1886d29f8baedf.js": "47f19241a655a6bdd7c5bd1a4752f9ce10c61b2c",
+    "/651.5f76e24060ec5217.js": "7043407642bb993af8d456f963bbab98a5792390",
+    "/690.339b06a8e1f28a0f.js": "8d96ed2cdbcde3b6208bbd14e5a6e1fa5663a6dd",
+    "/708.5ef4d631628ad2be.js": "9f6bb0f61b5f112d8d5e8312c64f580beccb72a7",
+    "/apple-touch-icon.png": "229df2094cc590088de00ea97a1eb4e4493101d2",
+    "/assets/cert/localhost-key.pem": "7db02c07b99c22f969586d8fe304bd41982964ab",
+    "/assets/cert/localhost.pem": "4ae1d5c9e5d033ba7f6e6ad96a98c16f76fdf593",
+    "/assets/favicon-32x32.png": "3a4032e54be879c788c5f68c08da2e4328bd6d1c",
+    "/assets/icons8-angularjs.svg": "8cdc5ae870a8fac3f0f794d447dad1f0b49da1a7",
+    "/assets/ngx-rocket-logo.png": "0ac53fd27406fe5a36e68285315fb0012e54058e",
+    "/assets/ngx-rocket-logo@192.png": "461b730f9c6dc818f8af9acbe62dfde24dc02d7a",
+    "/bootstrap-icons.35e09da2aecdd969.woff2": "17dad0776899ad1beadabd061c34e2a22b2cde74",
+    "/bootstrap-icons.cb4c7c05f3292543.woff": "75919c717ce5c5bc716bc51705c0cd0b60f4bffc",
+    "/fa-brands-400.1342812213307936.ttf": "7ce89c71d5a51ac65b159c71422783dd86529c66",
+    "/fa-brands-400.60e5c9d38b143ff0.woff2": "e948290773216dc1b50c2121314a8cf918c22b54",
+    "/fa-regular-400.6f7d0aec71887524.woff2": "46e272db3db1072791628679bc469112c8e41017",
+    "/fa-regular-400.d151c40a03a8a2ce.ttf": "775e2ecfc18d22b177274453d4c014ca6be63208",
+    "/fa-solid-900.bd6c2137b5c6cc45.ttf": "2b8e11389d98122399667cf64941eb58497dc128",
+    "/fa-solid-900.cece584ee568dd5d.woff2": "69335cd6a6ac82253ea5545899cccde35af39131",
+    "/favicon.ico": "7a9cb05552cbd02f1e1588fcecb72d818a299dee",
+    "/index.html": "70c67cd85f1cf099567be3a569c8496072c9cf8e",
+    "/main.619f9119f90c5958.js": "51f05a6588e1918d4bd7b20e89a9377f163a0e84",
+    "/manifest.webmanifest": "8e6f42df19a8fae845cfc637be931b19fd296089",
+    "/polyfills.9352ce6aa3c06102.js": "ab8262720d63e05e657e983724d8831c2d810c80",
+    "/runtime.725ddb09db16b2f2.js": "7eabd8384d6803abb55d8d775370f3ee1aa5384b",
+    "/scripts.d90277730e222d77.js": "0d05d96ea02a86c036bb044b6a9ccbd44285138c",
+    "/styles.49194ecad344372c.css": "9885fb84bea3991fd0ea828795a65ec4e660c741"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
