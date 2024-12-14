@@ -1,3 +1,5 @@
+ng deploy --no-nojekyll --dir=dist --base-href="/pickleball/"
+
 # Project Information
 
 - [Angular Starter Kit for Fast Prototype](https://medium.com/scrum-and-coke/angular-starter-kit-tutorial-199e51f734bb) blog
