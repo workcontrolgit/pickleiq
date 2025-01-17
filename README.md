@@ -1,7 +1,7 @@
 # Github Page Deploy
 
-Application URL: https://workcontrolgit.github.io/pickleball/
-Deploy command: ng deploy --no-nojekyll --dir=dist --base-href="/pickleball/"
+- Application URL: https://workcontrolgit.github.io/pickleball/
+- Deploy command: ng deploy --no-nojekyll --dir=dist --base-href="/pickleball/"
 
 # Project Information
 
