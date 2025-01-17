@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Mickleball": {
+    "PickleIQ": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -37,10 +37,7 @@
               "node_modules/datatables.net-dt/css/dataTables.dataTables.min.css",
               "src/main.scss"
             ],
-            "scripts": [
-              "node_modules/jquery/dist/jquery.js",
-              "node_modules/datatables.net/js/dataTables.min.js"
-          ],
+            "scripts": ["node_modules/jquery/dist/jquery.js", "node_modules/datatables.net/js/dataTables.min.js"],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -85,14 +82,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "Mickleball:build",
+            "buildTarget": "PickleIQ:build",
             "ssl": true,
             "sslKey": "src/assets/cert/localhost-key.pem",
             "sslCert": "src/assets/cert/localhost.pem"
           },
           "configurations": {
             "production": {
-              "buildTarget": "Mickleball:build:production"
+              "buildTarget": "PickleIQ:build:production"
             },
             "ci": {}
           }
@@ -100,7 +97,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "Mickleball:build"
+            "buildTarget": "PickleIQ:build"
           }
         },
         "test": {
@@ -131,13 +128,16 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "Mickleball:serve"
+            "devServerTarget": "PickleIQ:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "Mickleball:serve:production"
+              "devServerTarget": "PickleIQ:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }

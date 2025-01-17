@@ -1,4 +1,4 @@
-# Mickleball
+# PickleIQ
 
 Welcome to the project documentation!
 

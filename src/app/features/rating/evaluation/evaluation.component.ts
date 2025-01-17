@@ -44,7 +44,6 @@ export class EvaluationComponent implements OnInit {
   constructor(private serviceFormFields: FormfieldSkillRatingService, private modalService: NgbModal) {}
 
   ngOnInit() {
-
     log.error(this.model);
 
     var skillLevel = this.model['level'];
@@ -53,39 +52,46 @@ export class EvaluationComponent implements OnInit {
 
     switch (skillLevel) {
       case '2.0': {
+        // If skillLevel is '2.0', set instructions to the corresponding environment variable
         instructions = environment.evaluationInstruction.level20;
         break;
       }
       case '2.5': {
+        // If skillLevel is '2.5', set instructions to the corresponding environment variable
         instructions = environment.evaluationInstruction.level25;
         break;
       }
       case '3.0': {
+        // If skillLevel is '3.0', set instructions to the corresponding environment variable
         instructions = environment.evaluationInstruction.level30;
         break;
       }
       case '3.5': {
+        // If skillLevel is '3.5', set instructions to the corresponding environment variable
         instructions = environment.evaluationInstruction.level35;
         break;
       }
       case '4.0': {
+        // If skillLevel is '4.0', set instructions to the corresponding environment variable
         instructions = environment.evaluationInstruction.level40;
         break;
       }
       case '4.5': {
+        // If skillLevel is '4.5', set instructions to the corresponding environment variable
         instructions = environment.evaluationInstruction.level45;
         break;
       }
       case '5.0': {
+        // If skillLevel is '5.0', set instructions to the corresponding environment variable
         instructions = environment.evaluationInstruction.level50;
         break;
       }
       default: {
+        // If skillLevel doesn't match any case, set instructions to 'undefined'
         instructions = 'undefined';
         break;
       }
     }
-
     this.fields = this.serviceFormFields.getFormFields(skillLevel);
   }
 
@@ -101,7 +107,6 @@ export class EvaluationComponent implements OnInit {
   open() {
     const modalRef = this.modalService.open(WarningDialogComponent);
   }
-
 
   onFileUpload(event: any) {
     const file = event.target.files[0];
@@ -127,5 +132,4 @@ export class EvaluationComponent implements OnInit {
   //     console.error('Invalid JSON input');
   //   }
   // }
-
 }
