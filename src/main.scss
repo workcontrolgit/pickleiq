@@ -4,17 +4,20 @@
  */
 
 // Theme variables, must be included before the libraries to allow overriding defaults
-@import "theme/theme-variables";
+@use "theme/theme-variables";
 
 // 3rd party libraries
-@import "bootstrap/scss/bootstrap";
-@import "@fortawesome/fontawesome-free/scss/fontawesome";
-@import "@fortawesome/fontawesome-free/scss/brands";
-@import "@fortawesome/fontawesome-free/scss/regular";
-@import "@fortawesome/fontawesome-free/scss/solid";
-@import "bootstrap-icons/font/bootstrap-icons.css";
-@import "~@ng-select/ng-select/themes/default.theme.css";
-// @import "node_modules/ngx-print-element/styles.css";
+@use "bootstrap/scss/bootstrap";
+@use "@fortawesome/fontawesome-free/scss/fontawesome";
+@use "@fortawesome/fontawesome-free/scss/brands";
+@use "@fortawesome/fontawesome-free/scss/regular";
+@use "@fortawesome/fontawesome-free/scss/solid";
+@use "bootstrap-icons/font/bootstrap-icons.css";
+@use "@ng-select/ng-select/themes/default.theme.css";
+
+@use "ngx-sharebuttons/themes/circles.scss";
+@use "node_modules/ngx-sharebuttons/themes/modern.scss";
+@use "datatables.net-dt/css/dataTables.dataTables.min.css";
 
 // Theme customization
-@import "theme/theme";
+@use "theme/theme";

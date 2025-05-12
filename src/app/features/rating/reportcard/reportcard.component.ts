@@ -2,14 +2,14 @@ import { Component, ElementRef, ViewChild, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { FormfieldControlService } from '@app/services/form/formfield-control.service';
 import { Router } from '@angular/router';
-import { NgFor, NgClass, DatePipe, JsonPipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { Logger } from '@core/logger.service';
 const log = new Logger('ReportcardComponent');
 
-import { Config, NgxPrintElementComponent, NgxPrintElementService, NgxPrintElementDirective } from 'ngx-print-element';
+import { Config, NgxPrintElementService, NgxPrintElementDirective } from 'ngx-print-element';
 
 type TypeSkillRating = Array<{ Skillcode: string; Description: string; Rating: string }>;
 
@@ -17,8 +17,7 @@ type TypeSkillRating = Array<{ Skillcode: string; Description: string; Rating: s
   selector: 'app-reportcard',
   templateUrl: './reportcard.component.html',
   styleUrls: ['./reportcard.component.css'],
-  standalone: true,
-  imports: [NgxPrintElementComponent, NgxPrintElementDirective, NgFor, NgClass, DatePipe, JsonPipe, NgbTooltipModule],
+  imports: [NgxPrintElementDirective, NgClass, DatePipe, NgbTooltipModule],
 })
 export class ReportcardComponent implements OnInit {
   @ViewChild('tableRef') tableElement!: ElementRef<HTMLTableElement>;

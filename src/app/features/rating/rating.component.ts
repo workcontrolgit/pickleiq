@@ -7,7 +7,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
   selector: 'app-rating',
   templateUrl: './rating.component.html',
   styleUrls: ['./rating.component.scss'],
-  standalone: true,
   imports: [DashboardComponent],
 })
 export class RatingComponent implements OnInit {

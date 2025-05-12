@@ -12,7 +12,6 @@ const log = new Logger('app-home');
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   providers: [NgbCarouselConfig],
-  standalone: true,
   imports: [RouterLink, ShareButtonsModule, TranslateModule],
 })
 export class HomeComponent implements OnInit {

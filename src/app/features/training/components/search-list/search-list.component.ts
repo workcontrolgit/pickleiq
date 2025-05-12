@@ -13,7 +13,6 @@ const log = new Logger('search-list');
   selector: 'app-search-list',
   templateUrl: './search-list.component.html',
   styleUrls: ['./search-list.component.css'],
-  standalone: true,
   imports: [YouTubePlayer, NgbAccordionModule, JsonPipe, DatePipe],
 })
 export class SearchListComponent implements OnInit {

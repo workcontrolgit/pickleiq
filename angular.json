@@ -15,12 +15,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
@@ -32,18 +33,20 @@
               "src/silent-refresh.html"
             ],
             "styles": [
-              "node_modules/ngx-sharebuttons/themes/circles.scss",
-              "node_modules/ngx-sharebuttons/themes/modern.scss",
-              "node_modules/datatables.net-dt/css/dataTables.dataTables.min.css",
+              // "node_modules/ngx-sharebuttons/themes/circles.scss",
+              // "node_modules/ngx-sharebuttons/themes/modern.scss",
+              // "node_modules/datatables.net-dt/css/dataTables.dataTables.min.css",
               "src/main.scss"
             ],
             "scripts": ["node_modules/jquery/dist/jquery.js", "node_modules/datatables.net/js/dataTables.min.js"],
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "src/main.ts",
+            "stylePreprocessorOptions": {
+              "includePaths": ["."]
+            }
           },
           "configurations": {
             "production": {
@@ -52,8 +55,6 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -141,5 +142,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
