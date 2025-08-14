@@ -12,7 +12,6 @@ import { SearchInputComponent } from '../search-input/search-input.component';
   selector: 'app-search-container',
   templateUrl: './search-container.component.html',
   styleUrls: ['./search-container.component.css'],
-  standalone: true,
   imports: [SearchInputComponent, SearchListComponent],
 })
 export class SearchContainerComponent {

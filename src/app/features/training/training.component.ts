@@ -5,7 +5,6 @@ import { SearchContainerComponent } from './components/search-container/search-c
   selector: 'video-search',
   templateUrl: './training.component.html',
   styleUrls: ['./training.component.css'],
-  standalone: true,
   imports: [SearchContainerComponent],
 })
 export class TrainingComponent implements OnInit {

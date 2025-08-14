@@ -12,18 +12,17 @@ import { NgbNavModule, NgbCollapse, NgbDropdown, NgbDropdownToggle, NgbDropdownM
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  standalone: true,
   imports: [
     NgbNavModule,
     TranslateModule,
     NgbCollapse,
     RouterLink,
     RouterLinkActive,
-    LanguageSelectorComponent,
-    NgbDropdown,
-    NgbDropdownToggle,
-    NgbDropdownMenu,
-    AsyncPipe,
+    // LanguageSelectorComponent,
+    // NgbDropdown,
+    // NgbDropdownToggle,
+    // NgbDropdownMenu,
+    // AsyncPipe,
   ],
 })
 export class HeaderComponent implements OnInit {
