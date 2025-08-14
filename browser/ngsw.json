@@ -1,0 +1,87 @@
+{
+  "configVersion": 1,
+  "timestamp": 1755142226698,
+  "index": "/pickleball/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/pickleball/chunk-5AUVN2U6.js",
+        "/pickleball/chunk-7YISJ2RF.js",
+        "/pickleball/chunk-AHDTI6WO.js",
+        "/pickleball/chunk-LLUJEIV7.js",
+        "/pickleball/chunk-SCOEYVM6.js",
+        "/pickleball/chunk-TA6LLGSN.js",
+        "/pickleball/chunk-U4HGQDOS.js",
+        "/pickleball/chunk-XSJCTUYS.js",
+        "/pickleball/favicon.ico",
+        "/pickleball/index.html",
+        "/pickleball/main-DWN22TSH.js",
+        "/pickleball/manifest.webmanifest",
+        "/pickleball/polyfills-B3NOHSA3.js",
+        "/pickleball/scripts-LTUFJ4DQ.js",
+        "/pickleball/styles-6LZ7B3LT.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/pickleball/apple-touch-icon.png",
+        "/pickleball/assets/cert/localhost-key.pem",
+        "/pickleball/assets/cert/localhost.pem"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/pickleball/apple-touch-icon.png": "229df2094cc590088de00ea97a1eb4e4493101d2",
+    "/pickleball/assets/cert/localhost-key.pem": "7db02c07b99c22f969586d8fe304bd41982964ab",
+    "/pickleball/assets/cert/localhost.pem": "4ae1d5c9e5d033ba7f6e6ad96a98c16f76fdf593",
+    "/pickleball/chunk-5AUVN2U6.js": "1a71f515888a2e1b09e2924447a7719896f65121",
+    "/pickleball/chunk-7YISJ2RF.js": "61fa95d384227bf74a0b1243ea4b38a249cee71e",
+    "/pickleball/chunk-AHDTI6WO.js": "ddb8be971c883a743fcae3f2978656ea3a1e276f",
+    "/pickleball/chunk-LLUJEIV7.js": "48c18cbc0e769f7bebdeee9ebf6ff6012da95992",
+    "/pickleball/chunk-SCOEYVM6.js": "fe6e355584ed64b869153f704376f3c3e66e2f57",
+    "/pickleball/chunk-TA6LLGSN.js": "2b9d13a111baf29d61ee4d4927fde6c58aa5a1e3",
+    "/pickleball/chunk-U4HGQDOS.js": "2aad078828c053fe7c0670b4f937cabc0c0a5aa3",
+    "/pickleball/chunk-XSJCTUYS.js": "ded12d731c2dfe64a74d342c1c33098643caf8a1",
+    "/pickleball/favicon.ico": "7a9cb05552cbd02f1e1588fcecb72d818a299dee",
+    "/pickleball/index.html": "0d734899a90ade17df49ca6b7bcc86da7b47df87",
+    "/pickleball/main-DWN22TSH.js": "81d1107264a6d7c9dbae96ae171e4f245e8713fa",
+    "/pickleball/manifest.webmanifest": "8e6f42df19a8fae845cfc637be931b19fd296089",
+    "/pickleball/polyfills-B3NOHSA3.js": "68a75104c91ad231cd0cd47c9c28a9689c391906",
+    "/pickleball/scripts-LTUFJ4DQ.js": "2ad731d5df3bf9434fd86452e968ddd427a837fa",
+    "/pickleball/styles-6LZ7B3LT.css": "c6bafa8e1c6d59b1b925e71698ab987ca3187197"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
