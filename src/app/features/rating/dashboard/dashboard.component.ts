@@ -5,7 +5,6 @@ import { RouterLink } from '@angular/router';
   selector: 'rating-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  standalone: true,
   imports: [RouterLink],
 })
 export class DashboardComponent implements OnInit {

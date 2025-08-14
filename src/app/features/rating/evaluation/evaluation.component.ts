@@ -16,7 +16,6 @@ const log = new Logger('EvaluationComponent');
   selector: 'app-evaluation',
   templateUrl: './evaluation.component.html',
   styleUrls: ['./evaluation.component.css'],
-  standalone: true,
   imports: [ReactiveFormsModule, FormlyModule, JsonPipe, FormsModule, NgbTooltipModule],
 })
 export class EvaluationComponent implements OnInit {

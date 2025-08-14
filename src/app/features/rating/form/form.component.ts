@@ -15,7 +15,6 @@ const log = new Logger('FormComponent');
   selector: 'app-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.css'],
-  standalone: true,
   imports: [
     NgbNav,
     NgbNavItem,
