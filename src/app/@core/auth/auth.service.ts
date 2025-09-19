@@ -7,9 +7,10 @@ import { BehaviorSubject, combineLatest, Observable, ReplaySubject } from 'rxjs'
 import { filter, map } from 'rxjs/operators';
 import { environment } from '@env/environment';
 import { AnonymousAuthProvider } from './anonymous-auth-provider';
+import { OAuthProviderFactoryService } from './oauth-provider-factory.service';
 
-export type AuthMode = 'oidc' | 'anonymous';
-export type AuthProvider = 'oidc' | 'anonymous';
+export type AuthMode = 'oidc' | 'anonymous' | 'google' | 'facebook' | 'github' | 'microsoft';
+export type AuthProvider = 'oidc' | 'anonymous' | 'google' | 'facebook' | 'github' | 'microsoft';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +49,8 @@ export class AuthService {
   constructor(
     private oauthService: OAuthService,
     private router: Router,
-    private anonymousAuthProvider: AnonymousAuthProvider
+    private anonymousAuthProvider: AnonymousAuthProvider,
+    private providerFactory: OAuthProviderFactoryService
   ) {
     this.initializeAuthProviders();
   }
@@ -271,6 +273,76 @@ export class AuthService {
     throw new Error(`Unsupported auth provider: ${authMode}`);
   }
 
+  /**
+   * Dynamic login method that handles any provider
+   * @param provider The authentication provider to use
+   * @param targetUrl Optional target URL for redirect after login
+   */
+  public async loginWithProvider(provider: AuthProvider, targetUrl?: string): Promise<void> {
+    console.log(`Attempting login with provider: ${provider}`);
+
+    // Validate provider is available
+    if (!this.isProviderAvailable(provider)) {
+      throw new Error(`Provider '${provider}' is not available or not configured`);
+    }
+
+    // Set the current provider before starting login
+    this.authProviderSubject$.next(provider);
+
+    try {
+      switch (provider) {
+        case 'anonymous':
+          return await this.loginAnonymous();
+
+        case 'oidc':
+          return await this.loginOAuth(provider, targetUrl);
+
+        case 'google':
+        case 'facebook':
+        case 'github':
+        case 'microsoft':
+          return await this.loginOAuth(provider, targetUrl);
+
+        default:
+          throw new Error(`Unsupported provider: ${provider}`);
+      }
+    } catch (error) {
+      // Reset provider on error
+      this.authProviderSubject$.next(null);
+      throw error;
+    }
+  }
+
+  /**
+   * Generic OAuth login method for all OAuth providers
+   * @param provider The OAuth provider
+   * @param targetUrl Optional target URL for redirect
+   */
+  private async loginOAuth(provider: AuthProvider, targetUrl?: string): Promise<void> {
+    const authConfig = this.providerFactory.getAuthConfig(provider);
+    if (!authConfig) {
+      throw new Error(`No valid configuration found for provider: ${provider}`);
+    }
+
+    // Configure the OAuth service for this provider
+    this.oauthService.configure(authConfig);
+
+    try {
+      // Load discovery document if needed
+      if (authConfig.issuer && !authConfig.loginUrl) {
+        await this.oauthService.loadDiscoveryDocument();
+      }
+    } catch (error) {
+      console.warn(`Could not load discovery document for ${provider}, proceeding with manual configuration`, error);
+    }
+
+    // Set the auth mode and start login flow
+    this.setAuthMode(provider as AuthMode);
+    this.oauthService.initLoginFlow(targetUrl || this.router.url);
+
+    return Promise.resolve();
+  }
+
   public loginAnonymous(): Promise<void> {
     if (!environment.auth.enableAnonymousAuth) {
       return Promise.reject(new Error('Anonymous authentication is not enabled'));
@@ -344,14 +416,6 @@ export class AuthService {
     console.log(`Auth mode set to: ${mode}`);
   }
 
-  public getCurrentProvider(): AuthProvider | null {
-    return this.authProviderSubject$.value;
-  }
-
-  public getAvailableProviders(): AuthProvider[] {
-    return environment.auth.availableProviders as AuthProvider[];
-  }
-
   public isAnonymousAuthEnabled(): boolean {
     return environment.auth.enableAnonymousAuth === true;
   }
@@ -360,13 +424,103 @@ export class AuthService {
     return environment.oauthProviders?.oidc?.enabled === true;
   }
 
+  /**
+   * Check if a specific provider is available and configured
+   */
+  public isProviderAvailable(provider: AuthProvider): boolean {
+    switch (provider) {
+      case 'anonymous':
+        return environment.auth.enableAnonymousAuth === true;
+
+      case 'oidc':
+      case 'google':
+      case 'facebook':
+      case 'github':
+      case 'microsoft':
+        return this.providerFactory.isProviderAvailable(provider);
+
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Get list of all available providers
+   */
+  public getAvailableProviders(): AuthProvider[] {
+    const availableProviders: AuthProvider[] = [];
+
+    // Check anonymous auth
+    if (environment.auth.enableAnonymousAuth) {
+      availableProviders.push('anonymous');
+    }
+
+    // Check OAuth providers
+    const oauthProviders = this.providerFactory.getAvailableProviderIds();
+    availableProviders.push(...(oauthProviders as AuthProvider[]));
+
+    return availableProviders;
+  }
+
+  /**
+   * Switch to a different provider without logging out current session
+   */
+  public async switchProvider(newProvider: AuthProvider, targetUrl?: string): Promise<void> {
+    console.log(`Switching from ${this.getCurrentProvider()} to ${newProvider}`);
+
+    if (!this.isProviderAvailable(newProvider)) {
+      throw new Error(`Cannot switch to provider '${newProvider}': not available or not configured`);
+    }
+
+    // If switching to the same provider, do nothing
+    if (this.getCurrentProvider() === newProvider) {
+      console.log('Already using the requested provider');
+      return Promise.resolve();
+    }
+
+    // Store current session info before switching (for potential recovery)
+    const previousProvider = this.getCurrentProvider();
+    const wasAuthenticated = await this.isAuthenticated$.pipe(filter(Boolean)).toPromise();
+
+    try {
+      // Switch to new provider
+      return await this.loginWithProvider(newProvider, targetUrl);
+    } catch (error) {
+      console.error(`Failed to switch to provider ${newProvider}, staying with ${previousProvider}`, error);
+
+      // Restore previous provider on failure
+      if (previousProvider) {
+        this.authProviderSubject$.next(previousProvider);
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Get current authentication provider
+   */
+  public getCurrentProvider(): AuthProvider | null {
+    return this.authProviderSubject$.value;
+  }
+
+  /**
+   * Get metadata for the current provider
+   */
+  public getCurrentProviderMetadata() {
+    const currentProvider = this.getCurrentProvider();
+    if (!currentProvider) return null;
+
+    return this.providerFactory.getProviderMetadata(currentProvider);
+  }
+
   // Token and User Info Methods
   public get accessToken(): string | null {
-    const currentMode = this.getCurrentAuthMode();
+    const currentProvider = this.getCurrentProvider();
 
-    if (currentMode === 'anonymous') {
+    if (currentProvider === 'anonymous') {
       return this.anonymousAuthProvider.getAccessToken();
-    } else if (currentMode === 'oidc') {
+    } else if (this.isOAuthProvider(currentProvider)) {
       return this.oauthService.getAccessToken();
     }
 
@@ -374,23 +528,65 @@ export class AuthService {
   }
 
   public get refreshToken(): string | null {
-    const currentMode = this.getCurrentAuthMode();
+    const currentProvider = this.getCurrentProvider();
 
-    if (currentMode === 'anonymous') {
+    if (currentProvider === 'anonymous') {
       return null; // Anonymous sessions don't have refresh tokens
-    } else if (currentMode === 'oidc') {
+    } else if (this.isOAuthProvider(currentProvider)) {
       return this.oauthService.getRefreshToken();
     }
 
     return null;
   }
 
-  public get identityClaims(): any {
-    const currentMode = this.getCurrentAuthMode();
+  /**
+   * Check if the current provider is an OAuth provider
+   */
+  private isOAuthProvider(provider: AuthProvider | null): boolean {
+    return (
+      provider !== null &&
+      provider !== 'anonymous' &&
+      ['oidc', 'google', 'facebook', 'github', 'microsoft'].includes(provider)
+    );
+  }
 
-    if (currentMode === 'anonymous') {
+  /**
+   * Get provider-specific token information
+   */
+  public getProviderTokenInfo(provider?: AuthProvider): {
+    accessToken: string | null;
+    refreshToken: string | null;
+    expiresAt: Date | null;
+  } {
+    const targetProvider = provider || this.getCurrentProvider();
+
+    if (targetProvider === 'anonymous') {
+      return {
+        accessToken: this.anonymousAuthProvider.getAccessToken(),
+        refreshToken: null,
+        expiresAt: this.anonymousAuthProvider.getTokenExpirationDate(),
+      };
+    } else if (this.isOAuthProvider(targetProvider)) {
+      return {
+        accessToken: this.oauthService.getAccessToken(),
+        refreshToken: this.oauthService.getRefreshToken(),
+        expiresAt: new Date(this.oauthService.getAccessTokenExpiration()),
+      };
+    }
+
+    return {
+      accessToken: null,
+      refreshToken: null,
+      expiresAt: null,
+    };
+  }
+
+  public get identityClaims(): any {
+    const currentProvider = this.getCurrentProvider();
+
+    if (currentProvider === 'anonymous') {
       return this.anonymousAuthProvider.getUserProfile();
-    } else if (currentMode === 'oidc') {
+    } else if (this.isOAuthProvider(currentProvider)) {
       return this.oauthService.getIdentityClaims();
     }
 
@@ -398,15 +594,285 @@ export class AuthService {
   }
 
   public get idToken(): string | null {
-    const currentMode = this.getCurrentAuthMode();
+    const currentProvider = this.getCurrentProvider();
 
-    if (currentMode === 'anonymous') {
+    if (currentProvider === 'anonymous') {
       return this.anonymousAuthProvider.getAccessToken(); // Use access token as ID token for anonymous
-    } else if (currentMode === 'oidc') {
+    } else if (this.isOAuthProvider(currentProvider)) {
       return this.oauthService.getIdToken();
     }
 
     return null;
+  }
+
+  /**
+   * Get provider-specific user profile with normalized fields
+   */
+  public getProviderUserProfile(provider?: AuthProvider): any {
+    const targetProvider = provider || this.getCurrentProvider();
+
+    if (targetProvider === 'anonymous') {
+      return this.anonymousAuthProvider.getUserProfile();
+    } else if (this.isOAuthProvider(targetProvider)) {
+      const claims = this.oauthService.getIdentityClaims();
+      return this.normalizeOAuthUserProfile(claims, targetProvider);
+    }
+
+    return null;
+  }
+
+  /**
+   * Get provider-specific scopes that were granted
+   */
+  public getGrantedScopes(provider?: AuthProvider): string[] {
+    const targetProvider = provider || this.getCurrentProvider();
+
+    if (targetProvider === 'anonymous') {
+      // Anonymous auth doesn't use scopes, return default permissions
+      const user = this.anonymousAuthProvider.getCurrentUser();
+      return user?.permissions || [];
+    } else if (this.isOAuthProvider(targetProvider)) {
+      const accessToken = this.oauthService.getAccessToken();
+      if (accessToken) {
+        try {
+          // Extract scopes from token claims
+          const scopes = this.extractScopesFromToken(accessToken, targetProvider);
+          return scopes;
+        } catch (error) {
+          console.warn(`Could not extract scopes for provider ${targetProvider}:`, error);
+          return [];
+        }
+      }
+    }
+
+    return [];
+  }
+
+  /**
+   * Check if provider has specific scope/permission
+   */
+  public hasScope(scope: string, provider?: AuthProvider): boolean {
+    const grantedScopes = this.getGrantedScopes(provider);
+    return grantedScopes.includes(scope);
+  }
+
+  /**
+   * Get provider-specific claims from token
+   */
+  public getProviderClaims(provider?: AuthProvider): any {
+    const targetProvider = provider || this.getCurrentProvider();
+
+    if (targetProvider === 'anonymous') {
+      return this.anonymousAuthProvider.getUserProfile();
+    } else if (this.isOAuthProvider(targetProvider)) {
+      const idClaims = this.oauthService.getIdentityClaims();
+      const accessClaims = this.extractAccessTokenClaims(targetProvider);
+
+      // Merge claims with provider-specific processing
+      return this.processProviderClaims(idClaims, accessClaims, targetProvider);
+    }
+
+    return null;
+  }
+
+  /**
+   * Extract scopes from access token based on provider
+   */
+  private extractScopesFromToken(accessToken: string, provider: AuthProvider): string[] {
+    try {
+      // Decode JWT token to get claims
+      const payload = this.decodeJWTPayload(accessToken);
+
+      switch (provider) {
+        case 'google':
+          return payload.scope ? payload.scope.split(' ') : [];
+        case 'microsoft':
+          return payload.scp ? payload.scp.split(' ') : [];
+        case 'facebook':
+          // Facebook uses different scope structure
+          return payload.scopes ? payload.scopes.split(',') : [];
+        case 'github':
+          // GitHub doesn't include scopes in JWT, return configured scopes
+          const config = this.providerFactory.getAuthConfig(provider);
+          return config?.scope ? config.scope.split(' ') : [];
+        case 'oidc':
+          return payload.scope ? payload.scope.split(' ') : [];
+        default:
+          return [];
+      }
+    } catch (error) {
+      console.warn(`Could not decode token for provider ${provider}:`, error);
+      return [];
+    }
+  }
+
+  /**
+   * Extract claims from access token
+   */
+  private extractAccessTokenClaims(provider: AuthProvider): any {
+    const accessToken = this.oauthService.getAccessToken();
+    if (!accessToken) return {};
+
+    try {
+      return this.decodeJWTPayload(accessToken);
+    } catch (error) {
+      console.warn(`Could not extract access token claims for provider ${provider}:`, error);
+      return {};
+    }
+  }
+
+  /**
+   * Process provider-specific claims
+   */
+  private processProviderClaims(idClaims: any, accessClaims: any, provider: AuthProvider): any {
+    const baseClaims = { ...idClaims, ...accessClaims };
+
+    switch (provider) {
+      case 'google':
+        return {
+          ...baseClaims,
+          provider: 'google',
+          picture: idClaims.picture,
+          email_verified: idClaims.email_verified,
+          locale: idClaims.locale,
+        };
+
+      case 'microsoft':
+        return {
+          ...baseClaims,
+          provider: 'microsoft',
+          tenant_id: accessClaims.tid,
+          upn: accessClaims.upn,
+          given_name: idClaims.given_name,
+          family_name: idClaims.family_name,
+        };
+
+      case 'facebook':
+        return {
+          ...baseClaims,
+          provider: 'facebook',
+          picture: idClaims.picture?.data?.url,
+          verified: idClaims.verified,
+        };
+
+      case 'github':
+        return {
+          ...baseClaims,
+          provider: 'github',
+          login: idClaims.login,
+          avatar_url: idClaims.avatar_url,
+          html_url: idClaims.html_url,
+          type: idClaims.type,
+        };
+
+      case 'oidc':
+        return {
+          ...baseClaims,
+          provider: 'oidc',
+        };
+
+      default:
+        return {
+          ...baseClaims,
+          provider: provider,
+        };
+    }
+  }
+
+  /**
+   * Decode JWT payload without verification (for claim extraction)
+   */
+  private decodeJWTPayload(token: string): any {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        throw new Error('Invalid JWT format');
+      }
+
+      const payload = parts[1];
+      const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decoded);
+    } catch (error) {
+      console.error('Error decoding JWT payload:', error);
+      return {};
+    }
+  }
+
+  /**
+   * Normalize OAuth user profiles from different providers to a consistent format
+   */
+  private normalizeOAuthUserProfile(claims: any, provider: AuthProvider): any {
+    if (!claims) return null;
+
+    const normalized = {
+      id: claims.sub || claims.id,
+      provider: provider,
+      email: claims.email,
+      name: claims.name,
+      firstName: claims.given_name || claims.first_name,
+      lastName: claims.family_name || claims.last_name,
+      picture: claims.picture || claims.avatar_url,
+      roles: claims.roles || ['user'],
+      permissions: this.getProviderDefaultPermissions(provider),
+      raw: claims, // Keep original claims for provider-specific needs
+    };
+
+    // Provider-specific field mapping
+    switch (provider) {
+      case 'google':
+        normalized.firstName = claims.given_name;
+        normalized.lastName = claims.family_name;
+        normalized.picture = claims.picture;
+        break;
+
+      case 'facebook':
+        normalized.firstName = claims.first_name;
+        normalized.lastName = claims.last_name;
+        normalized.picture = claims.picture?.data?.url || claims.picture;
+        break;
+
+      case 'github':
+        normalized.name = claims.name || claims.login;
+        normalized.picture = claims.avatar_url;
+        normalized.email = claims.email; // May be null for private emails
+        break;
+
+      case 'microsoft':
+        normalized.firstName = claims.given_name;
+        normalized.lastName = claims.family_name;
+        normalized.picture = claims.picture;
+        break;
+
+      case 'oidc':
+        // Keep standard OIDC claims as-is
+        break;
+    }
+
+    return normalized;
+  }
+
+  /**
+   * Get default permissions for each provider
+   */
+  private getProviderDefaultPermissions(provider: AuthProvider): string[] {
+    switch (provider) {
+      case 'anonymous':
+        return ['rating.read', 'training.read', 'shop.read'];
+
+      case 'oidc':
+        // Organization login gets full permissions
+        return ['rating.read', 'rating.write', 'training.read', 'shop.read', 'admin.read'];
+
+      case 'google':
+      case 'facebook':
+      case 'github':
+      case 'microsoft':
+        // External OAuth providers get standard user permissions
+        return ['rating.read', 'rating.write', 'training.read', 'shop.read'];
+
+      default:
+        return ['rating.read'];
+    }
   }
 
   public get logoutUrl(): string {

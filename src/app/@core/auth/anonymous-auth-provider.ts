@@ -89,6 +89,11 @@ export class AnonymousAuthProvider {
     return session?.token || null;
   }
 
+  public getTokenExpirationDate(): Date | null {
+    const session = this.getCurrentSession();
+    return session?.expiresAt ? new Date(session.expiresAt) : null;
+  }
+
   public refreshSession(): Promise<AnonymousSession> {
     return new Promise((resolve, reject) => {
       const currentSession = this.getCurrentSession();

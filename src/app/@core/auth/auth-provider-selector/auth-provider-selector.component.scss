@@ -1,0 +1,315 @@
+@import "src/theme/theme-variables";
+
+// Component Variables
+$provider-btn-border-radius: 8px;
+$provider-btn-padding: 12px 16px;
+$provider-btn-transition: all 0.2s ease-in-out;
+$provider-icon-size: 20px;
+$provider-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$provider-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+// Provider Selector Header
+.provider-selector-header {
+  text-align: center;
+
+  .provider-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $gray-800;
+    margin-bottom: 0.5rem;
+  }
+
+  .provider-subtitle {
+    font-size: 0.95rem;
+    color: $gray-600;
+    line-height: 1.4;
+  }
+}
+
+// Provider Button Base Styles
+.provider-btn {
+  border-radius: $provider-btn-border-radius !important;
+  padding: $provider-btn-padding !important;
+  transition: $provider-btn-transition !important;
+  box-shadow: $provider-shadow !important;
+  border-width: 2px !important;
+  position: relative;
+  overflow: hidden;
+
+  &:hover:not(:disabled) {
+    box-shadow: $provider-shadow-hover !important;
+    transform: translateY(-1px);
+    border-width: 2px !important;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: $provider-shadow !important;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  &.loading {
+    pointer-events: none;
+
+    .provider-content {
+      opacity: 0.8;
+    }
+  }
+
+  // Remove focus outline and add custom focus styles
+  &:focus {
+    outline: none;
+    box-shadow: $provider-shadow-hover, 0 0 0 3px rgba(var(--bs-primary-rgb), 0.25) !important;
+  }
+}
+
+// Provider Icon Styles
+.provider-icon {
+  font-size: $provider-icon-size;
+  min-width: $provider-icon-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Provider Content Styles
+.provider-content {
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .provider-name {
+    font-size: 1rem;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .provider-description {
+    font-size: 0.85rem;
+    line-height: 1.2;
+    opacity: 0.9;
+  }
+}
+
+// Provider Spinner Styles
+.provider-spinner {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+// Compact Layout Styles
+.provider-name-compact {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.provider-spinner-compact {
+  font-size: 14px;
+}
+
+// Layout-specific styles
+.d-grid {
+  &.gap-2 > .provider-item {
+    margin-bottom: 0;
+  }
+}
+
+.d-flex.flex-column {
+  &.gap-2 > .provider-item:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.d-flex.flex-wrap {
+  &.gap-2 > .provider-item {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex: 0 0 auto;
+
+    .provider-btn {
+      width: auto !important;
+      min-width: 120px;
+    }
+  }
+}
+
+// Provider-specific button customizations
+.btn-danger.provider-btn {
+  background-color: #db4437;
+  border-color: #db4437;
+
+  &:hover:not(:disabled) {
+    background-color: #c23a2e;
+    border-color: #c23a2e;
+  }
+}
+
+.btn-dark.provider-btn {
+  background-color: #333;
+  border-color: #333;
+
+  &:hover:not(:disabled) {
+    background-color: #4d4d4d;
+    border-color: #4d4d4d;
+  }
+}
+
+.btn-info.provider-btn {
+  background-color: #00a1f1;
+  border-color: #00a1f1;
+
+  &:hover:not(:disabled) {
+    background-color: #0091d9;
+    border-color: #0091d9;
+  }
+}
+
+.btn-secondary.provider-btn {
+  background-color: $gray-600;
+  border-color: $gray-600;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background-color: #5a6169;
+    border-color: #5a6169;
+  }
+}
+
+// Development indicator
+.development-indicator {
+  padding: 8px;
+  border-radius: 6px;
+  background-color: rgba($warning, 0.1);
+  border: 1px solid rgba($warning, 0.2);
+
+  small {
+    font-size: 0.8rem;
+    color: $gray-600;
+  }
+
+  .fas {
+    color: $warning;
+  }
+}
+
+// Loading overlay
+.provider-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $provider-btn-border-radius;
+  z-index: 10;
+
+  .spinner-border {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+// Responsive Design
+@include media-breakpoint-down(sm) {
+  .provider-btn {
+    padding: 10px 12px !important;
+
+    .provider-icon {
+      font-size: 18px;
+      min-width: 18px;
+    }
+
+    .provider-content {
+      .provider-name {
+        font-size: 0.95rem;
+      }
+
+      .provider-description {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .provider-selector-header {
+    .provider-title {
+      font-size: 1.1rem;
+    }
+
+    .provider-subtitle {
+      font-size: 0.9rem;
+    }
+  }
+
+  // Force compact layout on small screens when using flex-wrap
+  .d-flex.flex-wrap.gap-2 > .provider-item {
+    flex: 1 1 calc(50% - 0.25rem);
+
+    .provider-btn {
+      min-width: auto;
+    }
+  }
+}
+
+@include media-breakpoint-down(xs) {
+  // Full width on extra small screens
+  .d-flex.flex-wrap.gap-2 > .provider-item {
+    flex: 1 1 100%;
+  }
+}
+
+// Animation for provider buttons
+@keyframes provider-button-pulse {
+  0% {
+    box-shadow: $provider-shadow;
+  }
+  50% {
+    box-shadow: $provider-shadow-hover;
+  }
+  100% {
+    box-shadow: $provider-shadow;
+  }
+}
+
+.provider-btn.loading {
+  animation: provider-button-pulse 2s infinite;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .provider-btn {
+    border-width: 3px !important;
+
+    &:focus {
+      box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.5) !important;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .provider-btn {
+    transition: none !important;
+
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+
+    &.loading {
+      animation: none;
+    }
+  }
+
+  .provider-spinner,
+  .provider-spinner-compact {
+    animation: none;
+  }
+}

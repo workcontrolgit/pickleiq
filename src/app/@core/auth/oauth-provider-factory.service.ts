@@ -146,8 +146,8 @@ export class OAuthProviderFactoryService {
     if (config.nonceStateSeparator !== undefined) {
       authConfig.nonceStateSeparator = config.nonceStateSeparator;
     }
-    if (config.customUrlParams !== undefined) {
-      authConfig.customUrlParams = config.customUrlParams;
+    if ((config as any).customUrlParams !== undefined) {
+      authConfig.customQueryParams = (config as any).customUrlParams;
     }
     if (config.loginUrl !== undefined) {
       authConfig.loginUrl = config.loginUrl;
