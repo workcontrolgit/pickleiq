@@ -12,8 +12,6 @@ import { FormComponent } from './form/form.component';
 import { ReportcardComponent } from './reportcard/reportcard.component';
 import { EvaluationComponent } from './evaluation/evaluation.component';
 import { WarningDialogComponent } from '../../@shared/components/warning-dialog/warning-dialog-component';
-import { DatePikerComponent } from '../../@shared/components/date-piker/date-piker.component';
-import { DatePickerValueAccessor } from '../../@shared/components/date-piker/date-picker.directive';
 import { FieldsetWrapper } from '../../@shared/components/wrappers/filedset-wrapper.component';
 import { LabelWrapper } from '../../@shared/components/wrappers/label-wrapper.component';
 
@@ -38,7 +36,6 @@ import { FormsModule } from '@angular/forms';
     NgbModule,
     ReactiveFormsModule,
     FormlyModule.forRoot({
-      types: [{ name: 'date', component: DatePikerComponent, wrappers: ['label', 'fieldset'] }],
       wrappers: [
         { name: 'label', component: LabelWrapper },
         { name: 'fieldset', component: FieldsetWrapper },
@@ -59,8 +56,6 @@ import { FormsModule } from '@angular/forms';
     ReportcardComponent,
     EvaluationComponent,
     WarningDialogComponent,
-    DatePikerComponent,
-    DatePickerValueAccessor,
     FieldsetWrapper,
     LabelWrapper,
   ],
