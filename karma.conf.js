@@ -10,7 +10,7 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-junit-reporter'),
-      require('karma-coverage-istanbul-reporter'),
+      require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma'),
     ],
     client: {
@@ -23,10 +23,9 @@ module.exports = function (config) {
       useBrowserName: false,
       suite: '', // Will become the package name attribute in xml testsuite element
     },
-    coverageIstanbulReporter: {
-      reports: ['html', 'lcovonly', 'text-summary'],
+    coverageReporter: {
       dir: path.join(__dirname, './reports/coverage'),
-      fixWebpackSourcePaths: true,
+      reporters: [{ type: 'html' }, { type: 'lcovonly' }, { type: 'text-summary' }],
     },
     reporters: ['progress', 'junit'],
     port: 9876,

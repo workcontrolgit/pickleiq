@@ -1,6 +1,17 @@
 {
   "permissions": {
-    "allow": ["Bash(npm uninstall:*)"],
+    "allow": [
+      "Bash(npm uninstall:*)",
+      "Bash(node:*)",
+      "Bash(npm view:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(stylelint:*)",
+      "Bash(npx stylelint:*)",
+      "Bash(npx htmlhint:*)",
+      "Bash(npm test)"
+    ],
     "deny": [],
     "ask": []
   }
