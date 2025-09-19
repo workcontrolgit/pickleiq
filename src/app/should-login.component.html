@@ -11,12 +11,64 @@
           <h4 class="card-title text-center">
             <i class="far fa-3x fa-user-circle text-muted"></i>
           </h4>
+
+          <!-- Warning message for anonymous auth -->
+          <div *ngIf="authWarningMessage" class="alert alert-warning alert-dismissible">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ authWarningMessage }}
+          </div>
+
+          <!-- General login message -->
           <p class="alert alert-dark">
-            You need to be logged in to view requested page. Please log in before continuing.
+            You need to be logged in to view requested page. Please choose your preferred login method below.
           </p>
-          <button class="btn btn-primary w-100" (click)="login($event)">
-            <span translate>Login</span>
-          </button>
+
+          <!-- Multiple authentication options -->
+          <div *ngIf="showMultipleOptions" class="d-grid gap-2">
+            <div *ngFor="let provider of availableProviders" class="mb-2">
+              <button
+                class="btn w-100 d-flex align-items-center justify-content-start {{
+                  getProviderButtonClass(provider.id)
+                }}"
+                (click)="loginWithProvider(provider.id, $event)"
+                [disabled]="isLoading"
+              >
+                <i class="{{ getProviderIcon(provider.id) }} me-3"></i>
+                <div class="text-start flex-grow-1">
+                  <div class="fw-bold">{{ provider.name }}</div>
+                  <small class="text-muted">{{ provider.description }}</small>
+                </div>
+                <i *ngIf="isLoading" class="fas fa-spinner fa-spin ms-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Single authentication option (legacy support) -->
+          <div *ngIf="!showMultipleOptions && availableProviders.length === 1">
+            <button
+              class="btn w-100 {{ getProviderButtonClass(availableProviders[0].id) }}"
+              (click)="loginWithProvider(availableProviders[0].id, $event)"
+              [disabled]="isLoading"
+            >
+              <i class="{{ getProviderIcon(availableProviders[0].id) }} me-2"></i>
+              <span>{{ availableProviders[0].name }}</span>
+              <i *ngIf="isLoading" class="fas fa-spinner fa-spin ms-2"></i>
+            </button>
+          </div>
+
+          <!-- No authentication options available -->
+          <div *ngIf="availableProviders.length === 0" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            No authentication methods are currently configured. Please contact your administrator.
+          </div>
+
+          <!-- Development mode indicator -->
+          <div *ngIf="hasAnonymousProvider" class="mt-3">
+            <small class="text-muted">
+              <i class="fas fa-code me-1"></i>
+              Development mode: Anonymous authentication is available for testing purposes.
+            </small>
+          </div>
         </div>
       </div>
     </div>

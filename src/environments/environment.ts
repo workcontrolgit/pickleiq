@@ -12,6 +12,7 @@ import { env } from './.env';
 
 export const environment = {
   production: false,
+  development: true,
   version: env.npm_package_version + '-dev',
   serverUrl: '/api',
   defaultLanguage: 'en-US',
@@ -53,25 +54,138 @@ export const environment = {
     maxResults: 10,
   },
 
-  //IdentityServer/OIDC Configuration
+  // Multi-Auth Configuration
+  auth: {
+    // Enable anonymous authentication for local development
+    enableAnonymousAuth: true,
+    // Default auth mode: 'oidc' | 'anonymous' | 'google' | 'facebook' | 'github' | 'microsoft'
+    defaultAuthMode: 'anonymous',
+    // Available auth providers
+    availableProviders: ['anonymous', 'oidc', 'google', 'facebook', 'github', 'microsoft'],
+    // Provider priority order for UI display
+    providerPriority: ['anonymous', 'google', 'oidc', 'microsoft', 'facebook', 'github'],
+  },
 
-  oidc: {
-    // issuer: 'https://localhost:44310', // running on localhost
-    // issuer: 'https://cat-token-identity.azurewebsites.net', // demo identityserver in Azure
-    issuer: 'https://cat-token-identity.azurewebsites.net', // identityserver in Azure
-    clientId: 'MickleballClient', // client id setup in IdentityServer4
-    responseType: 'code', //code flow PKCE
-    redirectUri: window.location.origin + '/auth-callback',
-    postLogoutRedirectUri: window.location.origin,
-    silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-    scope: 'openid profile email roles app.api.employeeprofile.read', // Ask offline_access to support refresh token refreshes
-    useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
-    silentRefreshTimeout: 50000, // For faster testing
-    timeoutFactor: 0.25, // For faster testing
-    sessionChecksEnabled: false,
-    showDebugInformation: false, // Also requires enabling "Verbose" level in devtools
-    clearHashAfterLogin: false, // https://github.com/manfredsteyer/angular-oauth2-oidc/issues/457#issuecomment-431807040,
-    nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by IdentityServer's URI encoding
+  // Anonymous Auth Configuration
+  anonymousAuth: {
+    enabled: true,
+    sessionTimeout: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+    defaultUser: {
+      id: 'anonymous-user',
+      name: 'Guest User',
+      email: 'guest@pickleiq.local',
+      roles: ['user'],
+      permissions: ['rating.read', 'training.read', 'shop.read'],
+    },
+    warningMessage: 'You are using anonymous authentication for development purposes.',
+    tokenPrefix: 'anonymous_',
+  },
+
+  // OAuth Provider Configurations
+  oauthProviders: {
+    // Custom OIDC Provider (existing IdentityServer)
+    oidc: {
+      enabled: true,
+      name: 'Organization Login',
+      description: 'Login with your organization account',
+      icon: 'fas fa-shield-alt',
+      brandColor: '#007bff',
+      buttonClass: 'btn-primary',
+      issuer: 'https://cat-token-identity.azurewebsites.net',
+      clientId: 'MickleballClient',
+      responseType: 'code',
+      scope: 'openid profile email roles app.api.employeeprofile.read',
+      redirectUri: window.location.origin + '/auth-callback',
+      postLogoutRedirectUri: window.location.origin,
+      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
+      useSilentRefresh: true,
+      silentRefreshTimeout: 50000,
+      timeoutFactor: 0.25,
+      sessionChecksEnabled: false,
+      showDebugInformation: false,
+      clearHashAfterLogin: false,
+      nonceStateSeparator: 'semicolon',
+    },
+
+    // Google OAuth2
+    google: {
+      enabled: false, // Disabled by default - requires client ID configuration
+      name: 'Google',
+      description: 'Continue with Google',
+      icon: 'fab fa-google',
+      brandColor: '#db4437',
+      buttonClass: 'btn-danger',
+      issuer: 'https://accounts.google.com',
+      clientId: '', // Configure with your Google Client ID
+      responseType: 'code',
+      scope: 'openid profile email',
+      redirectUri: window.location.origin + '/auth-callback',
+      postLogoutRedirectUri: window.location.origin,
+      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
+      useSilentRefresh: true,
+      strictDiscoveryDocumentValidation: false,
+    },
+
+    // Facebook OAuth2
+    facebook: {
+      enabled: false, // Disabled by default - requires app ID configuration
+      name: 'Facebook',
+      description: 'Continue with Facebook',
+      icon: 'fab fa-facebook-f',
+      brandColor: '#4267B2',
+      buttonClass: 'btn-primary',
+      issuer: 'https://www.facebook.com',
+      clientId: '', // Configure with your Facebook App ID
+      responseType: 'code',
+      scope: 'openid profile email',
+      redirectUri: window.location.origin + '/auth-callback',
+      postLogoutRedirectUri: window.location.origin,
+      useSilentRefresh: false, // Facebook doesn't support silent refresh
+      strictDiscoveryDocumentValidation: false,
+      customUrlParams: {
+        display: 'popup',
+      },
+    },
+
+    // GitHub OAuth2
+    github: {
+      enabled: false, // Disabled by default - requires client ID configuration
+      name: 'GitHub',
+      description: 'Continue with GitHub',
+      icon: 'fab fa-github',
+      brandColor: '#333',
+      buttonClass: 'btn-dark',
+      issuer: 'https://github.com',
+      clientId: '', // Configure with your GitHub Client ID
+      responseType: 'code',
+      scope: 'openid profile email',
+      redirectUri: window.location.origin + '/auth-callback',
+      postLogoutRedirectUri: window.location.origin,
+      useSilentRefresh: false, // GitHub doesn't support OIDC silent refresh
+      strictDiscoveryDocumentValidation: false,
+      loginUrl: 'https://github.com/login/oauth/authorize',
+      tokenEndpoint: 'https://github.com/login/oauth/access_token',
+      userinfoEndpoint: 'https://api.github.com/user',
+    },
+
+    // Microsoft/Azure AD OAuth2
+    microsoft: {
+      enabled: false, // Disabled by default - requires client ID configuration
+      name: 'Microsoft',
+      description: 'Continue with Microsoft',
+      icon: 'fab fa-microsoft',
+      brandColor: '#00a1f1',
+      buttonClass: 'btn-info',
+      issuer: 'https://login.microsoftonline.com/common/v2.0',
+      clientId: '', // Configure with your Microsoft/Azure AD Client ID
+      responseType: 'code',
+      scope: 'openid profile email',
+      redirectUri: window.location.origin + '/auth-callback',
+      postLogoutRedirectUri: window.location.origin,
+      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
+      useSilentRefresh: true,
+      strictDiscoveryDocumentValidation: false,
+    },
   },
   sampleModel40: {
     level: '4.0',
