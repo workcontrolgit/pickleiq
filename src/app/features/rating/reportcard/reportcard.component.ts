@@ -65,7 +65,6 @@ export class ReportcardComponent implements OnInit {
     var skillcode: string;
     var description: string;
     var rating: string;
-    var evalString: string;
     var filterLevel: string;
 
     log.error(this.model);
@@ -78,8 +77,8 @@ export class ReportcardComponent implements OnInit {
       skillcode = objSkillByLevel[i].skillcode;
       description = objSkillByLevel[i].description;
 
-      evalString = "this.model['" + skillcode + "']";
-      rating = eval(evalString);
+      // Safe property access instead of eval
+      rating = (this.model as any)[skillcode];
 
       this.objSkillRating.push({
         Skillcode: skillcode,

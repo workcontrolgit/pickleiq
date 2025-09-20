@@ -11,12 +11,19 @@
           <h4 class="card-title text-center">
             <i class="far fa-3x fa-user-circle text-muted"></i>
           </h4>
-          <p class="alert alert-dark">
-            You need to be logged in to view requested page. Please log in before continuing.
-          </p>
-          <button class="btn btn-primary w-100" (click)="login($event)">
-            <span translate>Login</span>
-          </button>
+
+          <!-- Auth Provider Selector Component -->
+          <app-auth-provider-selector
+            layout="grid"
+            [showDescriptions]="true"
+            [showAnonymousWarning]="true"
+            [isLoading]="isLoading"
+            [loadingProvider]="loadingProvider"
+            title=""
+            subtitle="You need to be logged in to view requested page. Please choose your preferred login method below."
+            (providerSelected)="onProviderSelected($event)"
+          >
+          </app-auth-provider-selector>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ const log = new Logger('App');
 })
 export class AppComponent implements OnInit, OnDestroy {
   // http loader filter
-  filteredUrlPatterns: string | null = environment.oidc.issuer + '/connect';
+  filteredUrlPatterns: string | null = environment.oauthProviders.oidc.issuer + '/connect';
 
   constructor(
     private router: Router,

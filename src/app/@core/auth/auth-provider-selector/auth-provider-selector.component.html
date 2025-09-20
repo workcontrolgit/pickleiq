@@ -1,0 +1,123 @@
+<!-- Provider Selection Header -->
+<div class="provider-selector-header mb-3" *ngIf="title || subtitle">
+  <h4 class="provider-title mb-1" *ngIf="title">{{ title }}</h4>
+  <p class="provider-subtitle text-muted mb-0" *ngIf="subtitle">{{ subtitle }}</p>
+</div>
+
+<!-- Anonymous Auth Warning -->
+<div
+  *ngIf="authWarningMessage && hasAnonymousProvider && showAnonymousWarning"
+  class="alert alert-warning alert-dismissible mb-3"
+>
+  <i class="fas fa-exclamation-triangle me-2"></i>
+  {{ authWarningMessage }}
+</div>
+
+<!-- Provider Selection Grid/List -->
+<div [class]="getLayoutClass()" *ngIf="availableProviders.length > 0">
+  <div *ngFor="let provider of availableProviders" class="provider-item" [class.mb-2]="layout !== 'compact'">
+    <!-- Full Layout (Grid/List) -->
+    <button
+      *ngIf="layout !== 'compact'"
+      [class]="getProviderButtonClass(provider)"
+      [class]="getProviderButtonContent(provider)"
+      [class.recommended]="isRecommendedProvider(provider.id)"
+      (click)="onProviderClick(provider)"
+      [disabled]="isLoading"
+      [style.border-color]="provider.brandColor"
+      type="button"
+    >
+      <!-- Provider Icon -->
+      <i [class]="provider.icon" [style.color]="provider.brandColor" class="me-3 provider-icon"></i>
+
+      <!-- Provider Content -->
+      <div class="text-start flex-grow-1 provider-content">
+        <div class="fw-bold provider-name">
+          {{ provider.name }}
+          <!-- Recommended Badge -->
+          <span
+            *ngIf="isRecommendedProvider(provider.id)"
+            class="badge bg-success ms-2 text-uppercase small"
+            title="Recommended based on your usage"
+          >
+            Recommended
+          </span>
+        </div>
+        <small class="text-muted provider-description" *ngIf="showDescriptions">
+          {{ provider.description }}
+        </small>
+        <!-- Usage Statistics -->
+        <small *ngIf="getProviderUsageStats(provider.id)" class="text-muted d-block provider-usage" title="Last used">
+          <i class="fas fa-clock me-1"></i>{{ getProviderUsageText(provider.id) }}
+        </small>
+      </div>
+
+      <!-- Loading Spinner -->
+      <i *ngIf="isProviderLoading(provider.id)" class="fas fa-spinner fa-spin ms-2 provider-spinner"></i>
+    </button>
+
+    <!-- Compact Layout -->
+    <button
+      *ngIf="layout === 'compact'"
+      [class]="getProviderButtonClass(provider)"
+      [class]="getProviderButtonContent(provider)"
+      (click)="onProviderClick(provider)"
+      [disabled]="isLoading"
+      [style.border-color]="provider.brandColor"
+      [title]="provider.description"
+      type="button"
+    >
+      <!-- Provider Icon -->
+      <i [class]="provider.icon" [style.color]="provider.brandColor" class="me-2 provider-icon"></i>
+
+      <!-- Provider Name (shorter) -->
+      <span class="provider-name-compact">{{ provider.name }}</span>
+
+      <!-- Loading Spinner -->
+      <i *ngIf="isProviderLoading(provider.id)" class="fas fa-spinner fa-spin ms-1 provider-spinner-compact"></i>
+    </button>
+  </div>
+</div>
+
+<!-- No Providers Available -->
+<div *ngIf="availableProviders.length === 0" class="alert alert-danger">
+  <i class="fas fa-exclamation-circle me-2"></i>
+  No authentication methods are currently configured. Please contact your administrator.
+</div>
+
+<!-- Remember Choice Checkbox -->
+<div *ngIf="showRememberChoice && availableProviders.length > 0" class="mt-3 mb-2">
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      id="rememberProviderChoice"
+      [(ngModel)]="rememberChoice"
+      (change)="onRememberChoiceChange()"
+    />
+    <label class="form-check-label" for="rememberProviderChoice">
+      <small class="text-muted">
+        <i class="fas fa-save me-1"></i>
+        Remember my choice for future visits
+      </small>
+    </label>
+  </div>
+</div>
+
+<!-- Development Mode Indicator -->
+<div *ngIf="hasAnonymousProvider" class="mt-3 development-indicator">
+  <small class="text-muted d-flex align-items-center justify-content-center">
+    <i class="fas fa-code me-1"></i>
+    Development mode: Anonymous authentication is available for testing purposes.
+  </small>
+</div>
+
+<!-- Global Loading Overlay (optional) -->
+<div *ngIf="isLoading && !loadingProvider" class="provider-loading-overlay">
+  <div class="d-flex align-items-center justify-content-center">
+    <div class="spinner-border text-primary me-2" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <span>Authenticating...</span>
+  </div>
+</div>

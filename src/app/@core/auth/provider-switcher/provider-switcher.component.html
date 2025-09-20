@@ -1,0 +1,144 @@
+<!-- Provider Switcher - Only show when authenticated with multiple sessions -->
+<div *ngIf="isAuthenticated && hasMultipleSessions()" class="provider-switcher" [class.compact]="compactMode">
+  <!-- Active Provider Button -->
+  <button
+    type="button"
+    class="btn provider-switcher-btn"
+    [class.dropdown-open]="showDropdown"
+    [disabled]="isSwitching"
+    [title]="getActiveSessionTooltip()"
+    (click)="toggleDropdown()"
+    (blur)="closeDropdown()"
+  >
+    <!-- Active Provider Icon and Name -->
+    <div class="active-provider-info" *ngIf="activeSession">
+      <i
+        [class]="getProviderIcon(activeSession.provider)"
+        [style.color]="getProviderBrandColor(activeSession.provider)"
+        class="provider-icon me-2"
+      ></i>
+
+      <span class="provider-name" *ngIf="!compactMode">
+        {{ getProviderDisplayName(activeSession.provider) }}
+      </span>
+
+      <!-- Session Status Indicators -->
+      <span
+        *ngIf="isSessionNearExpiry(activeSession)"
+        class="badge bg-warning ms-2 session-warning"
+        title="Session expires soon"
+      >
+        <i class="fas fa-clock"></i>
+        <span *ngIf="!compactMode" class="ms-1">{{ getSessionTimeRemaining(activeSession) }}</span>
+      </span>
+    </div>
+
+    <!-- Dropdown Arrow -->
+    <i class="fas fa-chevron-down ms-2 dropdown-arrow" *ngIf="!isSwitching"></i>
+
+    <!-- Loading Spinner -->
+    <i class="fas fa-spinner fa-spin ms-2" *ngIf="isSwitching"></i>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div
+    class="provider-switcher-dropdown"
+    [class.show]="showDropdown"
+    [class.dropdown-top]="dropdownPosition === 'top'"
+    [class.dropdown-bottom]="dropdownPosition === 'bottom'"
+  >
+    <!-- Dropdown Header -->
+    <div class="dropdown-header">
+      <small class="text-muted">
+        <i class="fas fa-exchange-alt me-1"></i>
+        Switch Account
+      </small>
+    </div>
+
+    <!-- Available Sessions -->
+    <div class="dropdown-body">
+      <button
+        *ngFor="let session of getSwitchableSessions()"
+        type="button"
+        class="dropdown-item provider-option"
+        [class.near-expiry]="isSessionNearExpiry(session)"
+        [disabled]="isSwitchingToProvider(session.provider)"
+        [title]="getSwitchableSessionTooltip(session)"
+        (click)="switchToProvider(session.provider)"
+      >
+        <!-- Provider Icon -->
+        <i
+          [class]="getProviderIcon(session.provider)"
+          [style.color]="getProviderBrandColor(session.provider)"
+          class="provider-icon me-2"
+        ></i>
+
+        <!-- Provider Info -->
+        <div class="provider-info flex-grow-1">
+          <div class="provider-name">
+            {{ getProviderDisplayName(session.provider) }}
+          </div>
+
+          <!-- User Info -->
+          <div class="user-info" *ngIf="session.userProfile?.email">
+            <small class="text-muted">{{ session.userProfile.email }}</small>
+          </div>
+        </div>
+
+        <!-- Session Status -->
+        <div class="session-status">
+          <!-- Time Remaining -->
+          <small
+            class="time-remaining"
+            [class.text-warning]="isSessionNearExpiry(session)"
+            [class.text-muted]="!isSessionNearExpiry(session)"
+          >
+            {{ getSessionTimeRemaining(session) }}
+          </small>
+
+          <!-- Loading Spinner for this specific provider -->
+          <i *ngIf="isSwitchingToProvider(session.provider)" class="fas fa-spinner fa-spin ms-2 text-primary"></i>
+        </div>
+      </button>
+    </div>
+
+    <!-- Dropdown Footer -->
+    <div class="dropdown-footer" *ngIf="!compactMode">
+      <small class="text-muted d-flex align-items-center justify-content-center">
+        <i class="fas fa-info-circle me-1"></i>
+        Sessions are managed automatically
+      </small>
+    </div>
+  </div>
+
+  <!-- Backdrop for mobile -->
+  <div class="dropdown-backdrop" [class.show]="showDropdown" (click)="closeDropdown()"></div>
+</div>
+
+<!-- Single Session Display (No Switching) -->
+<div
+  *ngIf="isAuthenticated && !hasMultipleSessions() && activeSession"
+  class="single-session-display"
+  [class.compact]="compactMode"
+  [title]="getActiveSessionTooltip()"
+>
+  <i
+    [class]="getProviderIcon(activeSession.provider)"
+    [style.color]="getProviderBrandColor(activeSession.provider)"
+    class="provider-icon me-2"
+  ></i>
+
+  <span class="provider-name" *ngIf="!compactMode">
+    {{ getProviderDisplayName(activeSession.provider) }}
+  </span>
+
+  <!-- Session Warning -->
+  <span
+    *ngIf="isSessionNearExpiry(activeSession)"
+    class="badge bg-warning ms-2 session-warning"
+    title="Session expires soon"
+  >
+    <i class="fas fa-clock"></i>
+    <span *ngIf="!compactMode" class="ms-1">{{ getSessionTimeRemaining(activeSession) }}</span>
+  </span>
+</div>

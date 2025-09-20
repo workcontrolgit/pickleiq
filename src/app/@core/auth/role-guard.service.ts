@@ -11,29 +11,66 @@ export class RoleGuard {
   userProfile: any;
 
   constructor(private authService: AuthService, private toastService: ToastService) {}
+
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.authService.canActivateProtectedRoutes$.pipe(
       map((canActivateProtectedRoutes: boolean) => {
         if (canActivateProtectedRoutes) {
-          // role check only if route contain data.role
-          // https://javascript.plainenglish.io/4-ways-to-check-whether-the-property-exists-in-a-javascript-object-20c2d96d8f6e
-          if (!!route.data.role) {
-            const routeRoles = route.data.role;
+          // Check role-based access if route contains data.role
+          if (route.data?.role) {
+            const requiredRoles = Array.isArray(route.data.role) ? route.data.role : [route.data.role];
 
-            this.userProfile = this.authService.identityClaims;
-            if (!!this.userProfile.role) {
-              const userRoles = this.userProfile.role;
+            const hasRequiredRole = requiredRoles.some((role: string) => this.authService.hasRole(role));
 
-              if (userRoles.includes(routeRoles)) {
-                // user's roles contains route's role
-                return true;
-              } else {
-                // toaster-display role user needs to have to access this route;
-                this.showToaster('Access denied', 'You do not have role ' + routeRoles);
-              }
+            if (hasRequiredRole) {
+              const currentMode = this.authService.getCurrentAuthMode();
+              const provider = this.authService.getCurrentProvider();
+              console.log(
+                `Role Guard: Access granted via ${provider} (${currentMode} mode) for roles: ${requiredRoles.join(
+                  ', '
+                )}`
+              );
+              return true;
+            } else {
+              this.showToaster('Access denied', `You do not have the required role(s): ${requiredRoles.join(', ')}`);
+              return false;
             }
           }
+
+          // Check permission-based access if route contains data.permissions
+          if (route.data?.permissions) {
+            const requiredPermissions = Array.isArray(route.data.permissions)
+              ? route.data.permissions
+              : [route.data.permissions];
+
+            const hasRequiredPermissions = requiredPermissions.every((permission: string) =>
+              this.authService.hasPermission(permission)
+            );
+
+            if (hasRequiredPermissions) {
+              const currentMode = this.authService.getCurrentAuthMode();
+              const provider = this.authService.getCurrentProvider();
+              console.log(
+                `Role Guard: Access granted via ${provider} (${currentMode} mode) for permissions: ${requiredPermissions.join(
+                  ', '
+                )}`
+              );
+              return true;
+            } else {
+              this.showToaster(
+                'Access denied',
+                `You do not have the required permission(s): ${requiredPermissions.join(', ')}`
+              );
+              return false;
+            }
+          }
+
+          // If no specific role or permission is required, allow access for authenticated users
+          return true;
         }
+
+        // User is not authenticated
+        this.showToaster('Access denied', 'Please login to continue access');
         return false;
       })
     );
@@ -41,8 +78,6 @@ export class RoleGuard {
 
   // ngbmodal service
   showToaster(title: string, message: string) {
-    this.toastService.show({ textOrTpl: 'Record has been updated.', classname: 'bg-success text-light', delay: 10000 });
-
-    // this.toastService.show({ textOrTpl: message, classname: 'bg-danger text-light', delay: 15000, header: title });
+    this.toastService.show({ textOrTpl: message, classname: 'bg-danger text-light', delay: 15000, header: title });
   }
 }
