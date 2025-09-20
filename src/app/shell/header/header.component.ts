@@ -7,6 +7,7 @@ import { LanguageSelectorComponent } from '../../i18n/language-selector.componen
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbNavModule, NgbCollapse, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu } from '@ng-bootstrap/ng-bootstrap';
+import { ProviderSwitcherComponent } from '@app/@core/auth/provider-switcher/provider-switcher.component';
 
 @Component({
   selector: 'app-header',
@@ -18,11 +19,12 @@ import { NgbNavModule, NgbCollapse, NgbDropdown, NgbDropdownToggle, NgbDropdownM
     NgbCollapse,
     RouterLink,
     RouterLinkActive,
-    // LanguageSelectorComponent,
-    // NgbDropdown,
-    // NgbDropdownToggle,
-    // NgbDropdownMenu,
-    // AsyncPipe,
+    LanguageSelectorComponent,
+    NgbDropdown,
+    NgbDropdownToggle,
+    NgbDropdownMenu,
+    AsyncPipe,
+    ProviderSwitcherComponent,
   ],
 })
 export class HeaderComponent implements OnInit {

@@ -120,7 +120,7 @@ export class AuthService {
     // Record provider usage for analytics
     this.authProvider$.subscribe((provider) => {
       if (provider) {
-        this.recordProviderUsage(provider, true);
+        this.recordProviderUsage(provider, null, true);
       }
     });
 
@@ -143,14 +143,6 @@ export class AuthService {
       }
     } catch (error) {
       console.error('Error handling session merging:', error);
-    }
-  }
-
-  private recordProviderUsage(provider: AuthProvider, success: boolean): void {
-    try {
-      this.userPreferences.recordProviderUsage(provider, success);
-    } catch (error) {
-      console.error('Error recording provider usage:', error);
     }
   }
 
@@ -401,6 +393,7 @@ export class AuthService {
         ...auditContext,
         error: 'Provider not available or not configured',
       });
+      this.recordProviderUsage(provider, null, false);
       throw new Error(`Provider '${provider}' is not available or not configured`);
     }
 
@@ -433,6 +426,9 @@ export class AuthService {
         ...auditContext,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
+
+      // Record failed login attempt for preferences
+      this.recordProviderUsage(provider, null, false);
 
       // Reset provider on error
       this.authProviderSubject$.next(null);
@@ -533,6 +529,7 @@ export class AuthService {
         ...auditContext,
         error: 'Security validation failed',
       });
+      this.recordProviderUsage(provider, userProfile, false);
       throw new Error(`Authentication blocked due to security validation: ${validationResult.summary}`);
     } else if (validationResult.recommendedAction === 'require_mfa') {
       console.warn(`MFA required for ${provider} login: ${validationResult.summary}`);
@@ -546,6 +543,9 @@ export class AuthService {
 
     // Log successful login
     this.securityAudit.logAuthEvent('login_success', provider, auditContext);
+
+    // Record provider usage for preferences and recommendations
+    this.recordProviderUsage(provider, userProfile, true);
 
     // Create session in session manager
     this.sessionManager.createSession(provider, accessToken, refreshToken, expiresAt, userProfile);
@@ -2037,6 +2037,45 @@ export class AuthService {
     if (recentHighRiskEvents >= 1) return 'medium';
 
     return 'low';
+  }
+
+  /**
+   * Record provider usage for user preferences and recommendations
+   */
+  private recordProviderUsage(provider: AuthProvider, userProfile: any, loginSuccess: boolean): void {
+    try {
+      // Initialize preferences if this is the first login for this user
+      const currentPrefs = this.userPreferences.getCurrentPreferences();
+      if (!currentPrefs && userProfile?.email) {
+        this.userPreferences.initializePreferences(userProfile.email, provider);
+      }
+
+      // Record the provider usage
+      this.userPreferences.recordProviderUsage(provider, loginSuccess);
+
+      console.log(`Provider usage recorded: ${provider} (success: ${loginSuccess})`);
+    } catch (error) {
+      console.warn('Failed to record provider usage:', error);
+    }
+  }
+
+  /**
+   * Set current provider (for provider switching)
+   */
+  public async setCurrentProvider(provider: AuthProvider): Promise<void> {
+    try {
+      // Update the current provider
+      this.authProviderSubject$.next(provider);
+
+      // Update the auth mode
+      this.setAuthMode(provider as AuthMode);
+
+      // Log the provider switch
+      console.log(`Current provider set to: ${provider}`);
+    } catch (error) {
+      console.error('Failed to set current provider:', error);
+      throw error;
+    }
   }
 
   /**

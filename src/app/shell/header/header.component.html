@@ -40,8 +40,16 @@
           <span translate>Position</span>
         </a> -->
       </div>
-      <!-- <div class="navbar-nav ml-auto">
+      <div class="navbar-nav ms-auto">
+        <!-- Provider Switcher -->
+        <div class="nav-item me-3 d-flex align-items-center">
+          <app-provider-switcher [compactMode]="false"></app-provider-switcher>
+        </div>
+
+        <!-- Language Selector -->
         <app-language-selector inNavbar="true" menuClass="dropdown-menu dropdown-menu-right"></app-language-selector>
+
+        <!-- User Menu -->
         <div class="nav-item" ngbDropdown display="dynamic">
           <a id="user-dropdown" class="nav-link" ngbDropdownToggle>
             <i class="fas fa-user-circle"></i>
@@ -59,7 +67,7 @@
             }
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
   </nav>
 </header>

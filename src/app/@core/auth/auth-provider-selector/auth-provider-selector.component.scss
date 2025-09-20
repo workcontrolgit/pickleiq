@@ -294,6 +294,81 @@ $provider-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
 }
 
+// Provider Preference Features
+.provider-btn.recommended {
+  border-width: 3px !important;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2) !important;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 6px 16px rgba(40, 167, 69, 0.3) !important;
+  }
+}
+
+.provider-usage {
+  font-size: 0.75rem !important;
+  margin-top: 2px;
+  opacity: 0.8;
+
+  .fas {
+    font-size: 0.7rem;
+  }
+}
+
+.badge {
+  font-size: 0.65rem;
+  padding: 0.25em 0.5em;
+  border-radius: 4px;
+}
+
+// Remember choice form styles
+.form-check {
+  padding-left: 1.5rem;
+
+  .form-check-input {
+    margin-top: 0.1rem;
+  }
+
+  .form-check-label {
+    margin-bottom: 0;
+    cursor: pointer;
+
+    small {
+      font-size: 0.85rem;
+      color: $gray-600;
+
+      .fas {
+        color: $primary;
+        opacity: 0.8;
+      }
+    }
+
+    &:hover small {
+      color: $gray-700;
+
+      .fas {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Provider recommendation indicator
+@keyframes recommended-glow {
+  0% {
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+  }
+}
+
+.provider-btn.recommended {
+  animation: recommended-glow 3s ease-in-out infinite;
+}
+
 // Reduced motion support
 @media (prefers-reduced-motion: reduce) {
   .provider-btn {
@@ -304,6 +379,10 @@ $provider-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     &.loading {
+      animation: none;
+    }
+
+    &.recommended {
       animation: none;
     }
   }
