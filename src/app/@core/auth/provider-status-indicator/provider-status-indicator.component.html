@@ -1,0 +1,196 @@
+<!-- Loading State -->
+<div *ngIf="isLoading" class="provider-status-loading">
+  <div class="d-flex align-items-center justify-content-center p-3">
+    <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <span class="text-muted">Loading provider status...</span>
+  </div>
+</div>
+
+<!-- Compact Layout -->
+<div *ngIf="!isLoading && layout === 'compact'" class="provider-status-compact">
+  <div class="provider-indicators">
+    <div
+      *ngFor="let status of getFilteredStatuses()"
+      class="provider-indicator"
+      [class]="getStatusColorClass(status)"
+      [title]="
+        getProviderDisplayName(status.provider) +
+        ': ' +
+        getStatusText(status) +
+        (status.errorMessage ? ' - ' + status.errorMessage : '')
+      "
+    >
+      <i [class]="getProviderIcon(status.provider)"></i>
+      <i [class]="getStatusIcon(status)" class="status-overlay"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Badges Layout -->
+<div *ngIf="!isLoading && layout === 'badges'" class="provider-status-badges">
+  <div class="provider-badges">
+    <span
+      *ngFor="let status of getFilteredStatuses()"
+      [class]="getStatusBadgeClass(status)"
+      [title]="
+        getProviderDisplayName(status.provider) +
+        ': ' +
+        getStatusText(status) +
+        (status.errorMessage ? ' - ' + status.errorMessage : '')
+      "
+    >
+      <i [class]="getProviderIcon(status.provider)" class="me-1"></i>
+      {{ getProviderDisplayName(status.provider) }}
+      <i [class]="getStatusIcon(status)" class="ms-1"></i>
+    </span>
+  </div>
+</div>
+
+<!-- Detailed Layout -->
+<div *ngIf="!isLoading && layout === 'detailed'" class="provider-status-detailed">
+  <div class="provider-status-header d-flex align-items-center justify-content-between mb-3">
+    <h6 class="mb-0">
+      <i class="fas fa-users me-2"></i>
+      Provider Connections ({{ getFilteredStatuses().length }})
+    </h6>
+    <div class="status-actions">
+      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="refreshStatuses()" title="Refresh status">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="provider-status-list">
+    <div
+      *ngFor="let status of getFilteredStatuses()"
+      class="provider-status-item"
+      [class.active]="status.isActive"
+      [class.connected]="status.isConnected"
+      [class.expired]="status.isExpired"
+      [class.expiring]="status.isExpiring"
+    >
+      <!-- Provider Info -->
+      <div class="provider-info">
+        <div class="provider-icon">
+          <i [class]="getProviderIcon(status.provider)" [style.color]="getProviderBrandColor(status.provider)"></i>
+          <i [class]="getStatusIcon(status)" class="status-badge" [class]="getStatusColorClass(status)"></i>
+        </div>
+
+        <div class="provider-details">
+          <div class="provider-name">
+            {{ getProviderDisplayName(status.provider) }}
+            <span *ngIf="status.isActive" class="badge bg-primary ms-1">Active</span>
+          </div>
+
+          <div class="provider-status">
+            <span [class]="getStatusColorClass(status)">
+              {{ getStatusText(status) }}
+            </span>
+            <span *ngIf="status.errorMessage" class="text-muted ms-1"> - {{ status.errorMessage }} </span>
+          </div>
+
+          <!-- Last Login Info -->
+          <div *ngIf="showLastLogin && status.lastLogin" class="provider-meta">
+            <small class="text-muted">
+              <i class="fas fa-clock me-1"></i>
+              Last login {{ formatTimeSince(status.lastLogin) }}
+            </small>
+          </div>
+
+          <!-- Expiry Info -->
+          <div *ngIf="status.expiresAt && !status.isExpired" class="provider-meta">
+            <small class="text-muted">
+              <i class="fas fa-hourglass-half me-1"></i>
+              Expires {{ formatExpiryTime(status.minutesToExpiry || 0) }}
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="provider-actions">
+        <!-- Connect Button -->
+        <button
+          *ngIf="!status.isConnected && canConnect(status.provider)"
+          type="button"
+          class="btn btn-sm btn-outline-success"
+          (click)="connectProvider(status.provider)"
+          title="Connect to {{ getProviderDisplayName(status.provider) }}"
+        >
+          <i class="fas fa-link"></i>
+          <span class="d-none d-md-inline ms-1">Connect</span>
+        </button>
+
+        <!-- Switch Button -->
+        <button
+          *ngIf="status.isConnected && !status.isActive && canSwitchTo(status.provider)"
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          (click)="switchToProvider(status.provider)"
+          title="Switch to {{ getProviderDisplayName(status.provider) }}"
+        >
+          <i class="fas fa-exchange-alt"></i>
+          <span class="d-none d-md-inline ms-1">Switch</span>
+        </button>
+
+        <!-- Refresh Button -->
+        <button
+          *ngIf="status.isConnected && (status.isExpiring || status.hasErrors)"
+          type="button"
+          class="btn btn-sm btn-outline-warning"
+          (click)="refreshProvider(status.provider)"
+          title="Refresh {{ getProviderDisplayName(status.provider) }} session"
+        >
+          <i class="fas fa-sync-alt"></i>
+          <span class="d-none d-md-inline ms-1">Refresh</span>
+        </button>
+
+        <!-- Disconnect Button -->
+        <button
+          *ngIf="status.isConnected"
+          type="button"
+          class="btn btn-sm btn-outline-danger"
+          (click)="disconnectProvider(status.provider)"
+          title="Disconnect from {{ getProviderDisplayName(status.provider) }}"
+        >
+          <i class="fas fa-unlink"></i>
+          <span class="d-none d-lg-inline ms-1">Disconnect</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- No Providers Message -->
+    <div *ngIf="getFilteredStatuses().length === 0" class="no-providers">
+      <div class="text-center p-4">
+        <i class="fas fa-users-slash text-muted mb-2" style="font-size: 2rem"></i>
+        <h6 class="text-muted">No providers connected</h6>
+        <small class="text-muted">
+          <span *ngIf="showOnlyConnected">No active connections found</span>
+          <span *ngIf="!showOnlyConnected">No authentication providers available</span>
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Footer -->
+  <div *ngIf="getFilteredStatuses().length > 0" class="provider-status-footer">
+    <div class="status-summary">
+      <small class="text-muted">
+        <ng-container [ngSwitch]="true">
+          <span *ngSwitchCase="getFilteredStatuses().filter(s => s.isConnected).length === 1">
+            1 provider connected
+          </span>
+          <span *ngSwitchDefault>
+            {{ getFilteredStatuses().filter(s => s.isConnected).length }} providers connected
+          </span>
+        </ng-container>
+        <span *ngIf="getFilteredStatuses().filter(s => s.isExpiring).length > 0" class="text-warning ms-2">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ getFilteredStatuses().filter(s => s.isExpiring).length }} expiring soon
+        </span>
+      </small>
+    </div>
+  </div>
+</div>

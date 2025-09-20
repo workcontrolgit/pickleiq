@@ -11,6 +11,7 @@ import { OAuthProviderFactoryService } from './oauth-provider-factory.service';
 import { SessionManagerService, ProviderSession } from './session-manager.service';
 import { AccountLinkingService } from './account-linking.service';
 import { UserPreferencesService } from './user-preferences.service';
+import { UnifiedProfileService } from './unified-profile.service';
 import { CSRFProtectionService } from './csrf-protection.service';
 import { SecurityValidationService, SecurityValidationContext } from './security-validation.service';
 import { RateLimitingService } from './rate-limiting.service';
@@ -61,6 +62,7 @@ export class AuthService {
     private sessionManager: SessionManagerService,
     private accountLinking: AccountLinkingService,
     private userPreferences: UserPreferencesService,
+    private unifiedProfile: UnifiedProfileService,
     private csrfProtection: CSRFProtectionService,
     private securityValidation: SecurityValidationService,
     private rateLimiting: RateLimitingService,
@@ -115,6 +117,7 @@ export class AuthService {
     this.sessionManager.sessions$.subscribe((sessionsMap) => {
       const sessions = Array.from(sessionsMap.values());
       this.handleSessionMerging(sessions);
+      this.updateUnifiedProfile(sessions);
     });
 
     // Record provider usage for analytics
@@ -126,6 +129,9 @@ export class AuthService {
 
     // Initialize automatic provider selection
     this.initializeAutoProviderSelection();
+
+    // Initialize unified profile service
+    this.initializeUnifiedProfile();
   }
 
   private async handleSessionMerging(sessions: ProviderSession[]): Promise<void> {
@@ -149,6 +155,48 @@ export class AuthService {
   private initializeAutoProviderSelection(): void {
     // This will be used during login to suggest preferred providers
     // Implementation depends on UI components
+  }
+
+  private initializeUnifiedProfile(): void {
+    // Subscribe to session changes to update unified profile
+    this.sessionManager.sessions$.subscribe((sessionsMap) => {
+      const sessions = Array.from(sessionsMap.values());
+      this.updateUnifiedProfile(sessions);
+    });
+
+    // Subscribe to authentication state changes
+    this.isAuthenticated$.subscribe((isAuth) => {
+      if (!isAuth) {
+        // Clear unified profile when not authenticated
+        this.unifiedProfile.clearProfile();
+      }
+    });
+  }
+
+  private updateUnifiedProfile(sessions: ProviderSession[]): void {
+    if (sessions.length === 0) {
+      this.unifiedProfile.clearProfile();
+      return;
+    }
+
+    try {
+      // Convert sessions to provider data for unified profile
+      const providerDataArray = sessions.map((session) => ({
+        provider: session.provider,
+        userData: session.userProfile,
+        loginTime: session.loginTime,
+        lastActivity: session.lastActivity,
+        emailVerified: session.userProfile?.email_verified || false,
+        lastLogin: session.loginTime,
+      }));
+
+      // Update the unified profile with current session data
+      this.unifiedProfile.refreshProfileFromSessions(sessions);
+
+      console.log(`Unified profile updated with ${sessions.length} provider sessions`);
+    } catch (error) {
+      console.error('Failed to update unified profile:', error);
+    }
   }
 
   private initializeOidcEvents(): void {
@@ -549,6 +597,10 @@ export class AuthService {
 
     // Create session in session manager
     this.sessionManager.createSession(provider, accessToken, refreshToken, expiresAt, userProfile);
+
+    // Update unified profile with new session data
+    const sessions = this.sessionManager.getAllSessions();
+    this.updateUnifiedProfile(sessions);
 
     // Log session creation
     this.securityAudit.logSessionEvent('session_created', provider, sessionId, auditContext);
@@ -1522,6 +1574,31 @@ export class AuthService {
       preferences$: this.userPreferences.preferences$,
       providerStats$: this.userPreferences.providerStats$,
     };
+  }
+
+  /**
+   * Get unified profile observables
+   */
+  public getUnifiedProfileObservables() {
+    return {
+      unifiedProfile$: this.unifiedProfile.unifiedProfile$,
+      providerData$: this.unifiedProfile.providerData$,
+    };
+  }
+
+  /**
+   * Get current unified profile
+   */
+  public getUnifiedProfile() {
+    return this.unifiedProfile.getCurrentProfile();
+  }
+
+  /**
+   * Refresh unified profile data
+   */
+  public refreshUnifiedProfile(): void {
+    const sessions = this.sessionManager.getAllSessions();
+    this.updateUnifiedProfile(sessions);
   }
 
   /**

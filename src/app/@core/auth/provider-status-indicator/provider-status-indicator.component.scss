@@ -1,0 +1,469 @@
+@import "src/theme/theme-variables";
+
+// Component Variables
+$indicator-size: 32px;
+$indicator-size-sm: 24px;
+$status-badge-size: 14px;
+$transition: all 0.2s ease-in-out;
+
+// Loading State
+.provider-status-loading {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+// Compact Layout
+.provider-status-compact {
+  .provider-indicators {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .provider-indicator {
+    position: relative;
+    width: $indicator-size;
+    height: $indicator-size;
+    border-radius: 50%;
+    border: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    i:first-child {
+      font-size: 0.9rem;
+    }
+
+    .status-overlay {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: $status-badge-size;
+      height: $status-badge-size;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      border: 1px solid white;
+    }
+
+    // Status-specific styling
+    &.text-success {
+      border-color: $success;
+    }
+
+    &.text-info {
+      border-color: $info;
+    }
+
+    &.text-warning {
+      border-color: $warning;
+    }
+
+    &.text-danger {
+      border-color: $danger;
+    }
+
+    &.text-muted {
+      border-color: #dee2e6;
+      opacity: 0.7;
+    }
+  }
+}
+
+// Badges Layout
+.provider-status-badges {
+  .provider-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 0.375em 0.5em;
+    border-radius: 6px;
+    transition: $transition;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    i {
+      font-size: 0.8em;
+    }
+  }
+}
+
+// Detailed Layout
+.provider-status-detailed {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+
+  .provider-status-header {
+    padding: 1rem 1rem 0;
+    border-bottom: 1px solid #f8f9fa;
+    margin-bottom: 0 !important;
+
+    h6 {
+      color: $gray-700;
+      font-weight: 600;
+    }
+
+    .status-actions {
+      .btn {
+        border-radius: 6px;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+
+  .provider-status-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .provider-status-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #f8f9fa;
+    transition: $transition;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #f8f9fa;
+    }
+
+    &.active {
+      background: rgba($primary, 0.05);
+      border-left: 3px solid $primary;
+    }
+
+    &.connected {
+      .provider-icon {
+        border-color: $success;
+      }
+    }
+
+    &.expiring {
+      background: rgba($warning, 0.05);
+      border-left: 3px solid $warning;
+    }
+
+    &.expired {
+      background: rgba($danger, 0.05);
+      border-left: 3px solid $danger;
+      opacity: 0.8;
+    }
+
+    .provider-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .provider-icon {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      flex-shrink: 0;
+
+      i:first-child {
+        font-size: 1.1rem;
+      }
+
+      .status-badge {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        border: 2px solid white;
+      }
+    }
+
+    .provider-details {
+      flex: 1;
+      min-width: 0;
+
+      .provider-name {
+        font-weight: 600;
+        color: $gray-800;
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+
+        .badge {
+          font-size: 0.65rem;
+          padding: 0.2em 0.4em;
+        }
+      }
+
+      .provider-status {
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .provider-meta {
+        font-size: 0.75rem;
+        margin-bottom: 0.125rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        i {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    .provider-actions {
+      display: flex;
+      gap: 0.25rem;
+      flex-shrink: 0;
+
+      .btn {
+        border-radius: 6px;
+        transition: $transition;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+
+  .no-providers {
+    padding: 1rem;
+
+    i {
+      opacity: 0.5;
+    }
+  }
+
+  .provider-status-footer {
+    padding: 0.75rem 1rem;
+    background: $gray-50;
+    border-top: 1px solid #f8f9fa;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+
+    .status-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      small {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@include media-breakpoint-down(md) {
+  .provider-status-compact {
+    .provider-indicator {
+      width: $indicator-size-sm;
+      height: $indicator-size-sm;
+
+      i:first-child {
+        font-size: 0.8rem;
+      }
+
+      .status-overlay {
+        width: 12px;
+        height: 12px;
+        font-size: 0.5rem;
+      }
+    }
+  }
+
+  .provider-status-detailed {
+    .provider-status-item {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+
+      .provider-info {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .provider-actions {
+        justify-content: center;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .provider-status-badges {
+    .provider-badges {
+      justify-content: center;
+    }
+  }
+
+  .provider-status-detailed {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+
+    .provider-status-header {
+      padding: 0.75rem;
+    }
+
+    .provider-status-item {
+      padding: 0.75rem;
+
+      .provider-actions .btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+      }
+    }
+
+    .provider-status-footer {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .provider-status-detailed {
+    border-width: 2px;
+  }
+
+  .provider-status-item {
+    border-bottom-width: 2px;
+
+    &.active,
+    &.expiring,
+    &.expired {
+      border-left-width: 4px;
+    }
+  }
+
+  .provider-indicator {
+    border-width: 3px;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .provider-indicator,
+  .badge,
+  .provider-status-item,
+  .btn {
+    transition: none;
+  }
+
+  .provider-indicator:hover,
+  .badge:hover,
+  .btn:hover {
+    transform: none;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .provider-status-loading,
+  .provider-status-detailed {
+    background: $gray-800;
+    border-color: $gray-600;
+    color: $gray-100;
+  }
+
+  .provider-status-header {
+    border-bottom-color: $gray-700;
+
+    h6 {
+      color: $gray-100;
+    }
+  }
+
+  .provider-status-item {
+    border-bottom-color: $gray-700;
+
+    &:hover {
+      background: $gray-700;
+    }
+
+    &.active {
+      background: rgba($primary, 0.15);
+    }
+
+    &.expiring {
+      background: rgba($warning, 0.15);
+    }
+
+    &.expired {
+      background: rgba($danger, 0.15);
+    }
+  }
+
+  .provider-icon {
+    background: $gray-700;
+    border-color: $gray-600;
+
+    .status-badge {
+      background: $gray-700;
+      border-color: $gray-700;
+    }
+  }
+
+  .provider-indicator {
+    background: $gray-700;
+    border-color: $gray-600;
+
+    .status-overlay {
+      background: $gray-700;
+      border-color: $gray-700;
+    }
+  }
+
+  .provider-status-footer {
+    background: $gray-700;
+    border-top-color: $gray-600;
+  }
+}
