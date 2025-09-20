@@ -14,7 +14,7 @@ import { UserPreferencesService } from './user-preferences.service';
 import { CSRFProtectionService } from './csrf-protection.service';
 import { SecurityValidationService, SecurityValidationContext } from './security-validation.service';
 import { RateLimitingService } from './rate-limiting.service';
-import { SecurityAuditService } from './security-audit.service';
+import { SecurityAuditService, SecurityAuditEvent } from './security-audit.service';
 
 export type AuthMode = 'oidc' | 'anonymous' | 'google' | 'facebook' | 'github' | 'microsoft';
 export type AuthProvider = 'oidc' | 'anonymous' | 'google' | 'facebook' | 'github' | 'microsoft';
@@ -464,7 +464,7 @@ export class AuthService {
     }
 
     // Generate CSRF protected state parameter
-    const sessionId = this.sessionManager.generateSessionId();
+    const sessionId = this.sessionManager.generateSessionId(provider);
     const csrfState = this.csrfProtection.generateOAuthState(provider, sessionId);
 
     // Set the auth mode and start login flow with CSRF protection
@@ -480,7 +480,7 @@ export class AuthService {
   public async handleOAuthCallback(provider: AuthProvider): Promise<void> {
     // Validate CSRF protection first
     const state = this.oauthService.state;
-    const sessionId = this.sessionManager.generateSessionId();
+    const sessionId = this.sessionManager.generateSessionId(provider);
 
     if (!this.csrfProtection.validateOAuthCallback(provider, state, sessionId)) {
       throw new Error(`CSRF validation failed for provider: ${provider}`);
@@ -565,7 +565,7 @@ export class AuthService {
       this.setAuthMode('anonymous');
 
       // Generate CSRF token for anonymous session
-      const sessionId = this.sessionManager.generateSessionId();
+      const sessionId = this.sessionManager.generateSessionId('anonymous');
       this.csrfProtection.generateCSRFToken('anonymous', sessionId);
 
       // Create session in session manager
@@ -1834,7 +1834,7 @@ export class AuthService {
    * Get security audit events
    */
   public getSecurityAuditEvents(filter?: any): any[] {
-    return filter ? this.securityAudit.searchEvents(filter) : this.securityAudit.events$.value;
+    return filter ? this.securityAudit.searchEvents(filter) : this.securityAudit.getAllEvents();
   }
 
   /**
@@ -1915,7 +1915,8 @@ export class AuthService {
 
     // Check for failed validations
     const failedValidations = recentEvents.filter(
-      (e) => e.eventType === 'security_validation_failed' && e.details?.recommendedAction === 'block'
+      (e: SecurityAuditEvent) =>
+        e.eventType === 'security_validation_failed' && e.details?.recommendedAction === 'block'
     );
     if (failedValidations.length > 0) {
       suspiciousFactors.push('Recent security validation failures');
@@ -1923,7 +1924,7 @@ export class AuthService {
     }
 
     // Check for rate limiting hits
-    const rateLimitHits = recentEvents.filter((e) => e.eventType === 'rate_limit_exceeded');
+    const rateLimitHits = recentEvents.filter((e: SecurityAuditEvent) => e.eventType === 'rate_limit_exceeded');
     if (rateLimitHits.length > 0) {
       suspiciousFactors.push('Rate limiting violations');
       riskScore += 20;
@@ -1938,7 +1939,7 @@ export class AuthService {
 
     // Check for CSRF issues
     const csrfIssues = recentEvents.filter(
-      (e) => e.eventType === 'csrf_token_mismatch' || e.eventType === 'csrf_token_missing'
+      (e: SecurityAuditEvent) => e.eventType === 'csrf_token_mismatch' || e.eventType === 'csrf_token_missing'
     );
     if (csrfIssues.length > 0) {
       suspiciousFactors.push('CSRF token validation issues');
@@ -1999,7 +2000,9 @@ export class AuthService {
       sessionId: currentSession.sessionId,
     });
 
-    const uniqueUserAgents = new Set(recentEvents.map((e) => e.userAgent).filter((ua) => ua));
+    const uniqueUserAgents = new Set(
+      recentEvents.map((e: SecurityAuditEvent) => e.userAgent).filter((ua: string | undefined) => ua)
+    );
 
     // If more than 2 different user agents in the same session within an hour
     if (uniqueUserAgents.size > 2) {

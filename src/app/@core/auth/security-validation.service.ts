@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { AuthProvider } from './auth.service';
+import { environment } from '@env/environment';
 
 export interface SecurityValidationRule {
   id: string;
@@ -445,7 +446,7 @@ export class SecurityValidationService {
     try {
       const claims = this.decodeJWTClaims(context.accessToken || '');
       // In a real implementation, you'd get this from environment configuration
-      const expectedClientId = process.env['GOOGLE_CLIENT_ID'] || 'your-google-client-id';
+      const expectedClientId = environment.oauthProviders.google.clientId;
 
       if (claims.aud !== expectedClientId) {
         return {
@@ -593,7 +594,7 @@ export class SecurityValidationService {
   private async validateFacebookApp(context: SecurityValidationContext): Promise<SecurityValidationResult> {
     try {
       const claims = this.decodeJWTClaims(context.accessToken || '');
-      const expectedAppId = process.env['FACEBOOK_APP_ID'] || 'your-facebook-app-id';
+      const expectedAppId = environment.oauthProviders.facebook.clientId;
 
       if (claims.app_id !== expectedAppId) {
         return {

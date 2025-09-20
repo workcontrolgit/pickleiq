@@ -421,6 +421,20 @@ export class SecurityAuditService {
   }
 
   /**
+   * Get all security audit events
+   */
+  public getAllEvents(): SecurityAuditEvent[] {
+    return this.eventsSubject$.value;
+  }
+
+  /**
+   * Get security audit events (alias for searchEvents)
+   */
+  public getSecurityAuditEvents(filter: AuditSearchFilter): SecurityAuditEvent[] {
+    return this.searchEvents(filter);
+  }
+
+  /**
    * Search audit events
    */
   public searchEvents(filter: AuditSearchFilter): SecurityAuditEvent[] {
