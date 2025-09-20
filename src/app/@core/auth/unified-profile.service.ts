@@ -152,18 +152,29 @@ export class UnifiedProfileService {
    * Update provider data from sessions
    */
   public refreshProfileFromSessions(sessions: ProviderSession[]): void {
-    this.updateProviderData(sessions);
+    try {
+      this.updateProviderData(sessions);
+    } catch (error) {
+      console.error('Error refreshing profile from sessions:', error);
+      // Initialize with empty array to prevent further errors
+      this.providerDataSubject$.next([]);
+    }
   }
 
   private updateProviderData(sessions: ProviderSession[]): void {
-    const providerDataArray: ProviderUserData[] = sessions
-      .filter((session) => session.isActive && session.userProfile)
-      .map((session) => this.extractProviderUserData(session));
+    try {
+      const providerDataArray: ProviderUserData[] = sessions
+        .filter((session) => session.isActive && session.userProfile)
+        .map((session) => this.extractProviderUserData(session));
 
-    this.providerDataSubject$.next(providerDataArray);
+      this.providerDataSubject$.next(providerDataArray);
 
-    if (providerDataArray.length > 0) {
-      this.mergeProfileData(providerDataArray);
+      if (providerDataArray.length > 0) {
+        this.mergeProfileData(providerDataArray);
+      }
+    } catch (error) {
+      console.error('Error updating provider data:', error);
+      this.providerDataSubject$.next([]);
     }
   }
 
@@ -273,40 +284,59 @@ export class UnifiedProfileService {
    * Merge profile data from multiple providers
    */
   private mergeProfileData(providerDataArray: ProviderUserData[]): void {
-    if (providerDataArray.length === 0) return;
+    try {
+      if (providerDataArray.length === 0) return;
 
-    // Determine primary provider (most complete, most recent, or user preference)
-    const primaryProvider = this.determinePrimaryProvider(providerDataArray);
-    const primaryData = providerDataArray.find((p) => p.provider === primaryProvider);
+      // Determine primary provider (most complete, most recent, or user preference)
+      const primaryProvider = this.determinePrimaryProvider(providerDataArray);
+      const primaryData = providerDataArray.find((p) => p.provider === primaryProvider);
 
-    if (!primaryData?.email) return;
+      if (!primaryData?.email) return;
 
-    // Start building unified profile
-    const unifiedProfile: UnifiedUserProfile = {
-      primaryProvider,
-      primaryEmail: primaryData.email,
-      name: '',
-      displayName: '',
-      emails: [],
-      phoneNumbers: [],
-      socialLinks: {},
-      providerData: providerDataArray,
-      lastUpdated: new Date(),
-      dataCompleteness: 0,
-      conflictResolution: {},
-    };
+      // Start building unified profile
+      const unifiedProfile: UnifiedUserProfile = {
+        primaryProvider,
+        primaryEmail: primaryData.email,
+        name: '',
+        displayName: '',
+        emails: [],
+        phoneNumbers: [],
+        socialLinks: {},
+        providerData: providerDataArray,
+        lastUpdated: new Date(),
+        dataCompleteness: 0,
+        conflictResolution: {},
+      };
 
-    // Merge each field using the appropriate strategy
-    this.mergeFields(unifiedProfile, providerDataArray);
+      // Merge each field using the appropriate strategy
+      this.mergeFields(unifiedProfile, providerDataArray);
 
-    // Calculate data completeness
-    unifiedProfile.dataCompleteness = this.calculateDataCompleteness(unifiedProfile);
+      // Calculate data completeness
+      unifiedProfile.dataCompleteness = this.calculateDataCompleteness(unifiedProfile);
 
-    // Store and emit the unified profile
-    this.unifiedProfileSubject$.next(unifiedProfile);
-    this.persistProfile(unifiedProfile);
+      // Store and emit the unified profile
+      this.unifiedProfileSubject$.next(unifiedProfile);
+      this.persistProfile(unifiedProfile);
 
-    console.log('Unified profile updated:', unifiedProfile);
+      console.log('Unified profile updated:', unifiedProfile);
+    } catch (error) {
+      console.error('Error merging profile data:', error);
+      // Emit a basic profile so UI doesn't break
+      const fallbackProfile: UnifiedUserProfile = {
+        primaryProvider: 'anonymous',
+        primaryEmail: 'guest@pickleiq.local',
+        name: 'Guest User',
+        displayName: 'Guest User',
+        emails: [{ email: 'guest@pickleiq.local', primary: true, verified: false, provider: 'anonymous' }],
+        phoneNumbers: [],
+        socialLinks: {},
+        providerData: [],
+        lastUpdated: new Date(),
+        dataCompleteness: 0,
+        conflictResolution: {},
+      };
+      this.unifiedProfileSubject$.next(fallbackProfile);
+    }
   }
 
   /**
