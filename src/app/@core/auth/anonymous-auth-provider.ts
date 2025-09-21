@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '@env/environment';
+import { LegacyAuthAdapterService } from '@core/services/legacy-auth-adapter.service';
 
 export interface AnonymousUser {
   id: string;
@@ -30,12 +30,12 @@ export class AnonymousAuthProvider {
   public session$ = this.sessionSubject$.asObservable();
   public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 
-  constructor() {
+  constructor(private legacyAuthAdapter: LegacyAuthAdapterService) {
     this.loadExistingSession();
   }
 
   public get isEnabled(): boolean {
-    return environment.anonymousAuth?.enabled === true;
+    return this.legacyAuthAdapter.isAnonymousAuthEnabled();
   }
 
   public loginAnonymously(): Promise<AnonymousSession> {
@@ -104,10 +104,11 @@ export class AnonymousAuthProvider {
       }
 
       try {
+        const config = this.legacyAuthAdapter.getLegacyAuthConfig();
         const newSession: AnonymousSession = {
           ...currentSession,
           token: this.generateToken(),
-          expiresAt: Date.now() + environment.anonymousAuth.sessionTimeout,
+          expiresAt: Date.now() + (config.anonymousAuth?.sessionTimeout || 24 * 60 * 60 * 1000),
         };
 
         this.storeSession(newSession);
@@ -122,13 +123,14 @@ export class AnonymousAuthProvider {
   }
 
   private createAnonymousSession(): AnonymousSession {
+    const config = this.legacyAuthAdapter.getLegacyAuthConfig();
     const sessionId = this.generateSessionId();
     const token = this.generateToken();
     const loginTime = Date.now();
-    const expiresAt = loginTime + environment.anonymousAuth.sessionTimeout;
+    const expiresAt = loginTime + (config.anonymousAuth?.sessionTimeout || 24 * 60 * 60 * 1000);
 
     const user: AnonymousUser = {
-      ...environment.anonymousAuth.defaultUser,
+      ...config.anonymousAuth?.defaultUser,
       sessionId,
       loginTime,
     };
@@ -142,7 +144,8 @@ export class AnonymousAuthProvider {
   }
 
   private generateToken(): string {
-    const prefix = environment.anonymousAuth.tokenPrefix;
+    const config = this.legacyAuthAdapter.getLegacyAuthConfig();
+    const prefix = config.anonymousAuth?.tokenPrefix || 'temp_';
     const timestamp = Date.now();
     const random = Math.random().toString(36).substr(2, 9);
     return `${prefix}${timestamp}_${random}`;

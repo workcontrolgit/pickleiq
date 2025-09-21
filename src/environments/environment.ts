@@ -40,239 +40,47 @@ export const environment = {
       '<div class="alert alert-success"><h4>Section 2 - Skill Evaluation</h4><span class="fw-normal">Select a rating for each skill code.  Skill level 5.0 should ALSO possess all 4.5 skills.</span><p><div>A = Solid, consistent performance <br>B = Good basic form, but needs work <br> C = Attempted but very poorly executed/needs work <br>D = Not observed or not able to execute </div></p></div>',
   },
 
-  // skills list in googlesheet
-  googleSheet: {
-    apiKey: 'AIzaSyC3AgyGHXMyj8j-iFZ4ucrenprWrZm0VKI',
-    spreadsheetId: '17zEoQvmjqBHoDykjxgun4upXg5QT6KooHnuAp_wXmac',
-    worksheetGrades: 'Grades',
-    worksheetSkills: 'Skills',
-  },
-  // training video search in youtube
-  youtube: {
-    apiUrl: 'https://www.googleapis.com/youtube/v3/search',
-    apiKey: 'AIzaSyAq9W0tD3SJxtn6RE0aUcBseMMz_WcKhAU',
-    maxResults: 10,
+  // External services - API keys moved to server-side for security
+  externalServices: {
+    googleSheets: {
+      // API calls now proxied through server-side endpoints
+      endpoint: '/api/v1/data/skills',
+      worksheetGrades: 'Grades',
+      worksheetSkills: 'Skills',
+    },
+    youtube: {
+      // YouTube search proxied through server for security
+      endpoint: '/api/v1/media/youtube',
+      maxResults: 10,
+    },
   },
 
-  // Multi-Auth Configuration
+  // Simplified Azure AD B2C Authentication
   auth: {
-    // Enable anonymous authentication for local development
+    // Enable anonymous authentication for local development only
     enableAnonymousAuth: true,
-    // Default auth mode: 'oidc' | 'anonymous' | 'google' | 'facebook' | 'github' | 'microsoft'
-    defaultAuthMode: 'anonymous',
-    // Available auth providers
-    availableProviders: ['anonymous', 'oidc', 'google', 'facebook', 'github', 'microsoft'],
-    // Provider priority order for UI display
-    providerPriority: ['anonymous', 'google', 'oidc', 'microsoft', 'facebook', 'github'],
+    // Primary authentication provider
+    provider: 'azure-ad-b2c',
+    // Development mode settings
+    developmentMode: true,
   },
 
-  // Anonymous Auth Configuration
-  anonymousAuth: {
-    enabled: true,
-    sessionTimeout: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-    defaultUser: {
-      id: 'anonymous-user',
-      name: 'Guest User',
-      email: 'guest@pickleiq.local',
-      roles: ['user'],
-      permissions: ['rating.read', 'training.read', 'shop.read'],
-    },
-    warningMessage: 'You are using anonymous authentication for development purposes.',
-    tokenPrefix: 'anonymous_',
+  // Azure AD B2C Configuration
+  azureAdB2C: {
+    tenantName: 'pickleiq',
+    clientId: 'your-client-id', // Configure in Azure Portal
+    policyName: 'B2C_1_signup_signin',
+    domain: 'pickleiq.b2clogin.com',
+    // Redirect URIs
+    redirectUri: window.location.origin + '/auth-callback',
+    postLogoutRedirectUri: window.location.origin,
+    silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
   },
 
-  // OAuth Provider Configurations
-  oauthProviders: {
-    // Custom OIDC Provider (existing IdentityServer)
-    oidc: {
-      enabled: true,
-      name: 'Organization Login',
-      description: 'Login with your organization account',
-      icon: 'fas fa-shield-alt',
-      brandColor: '#007bff',
-      buttonClass: 'btn-primary',
-      issuer: 'https://cat-token-identity.azurewebsites.net',
-      clientId: 'MickleballClient',
-      responseType: 'code',
-      scope: 'openid profile email roles app.api.employeeprofile.read',
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-      useSilentRefresh: true,
-      silentRefreshTimeout: 50000,
-      timeoutFactor: 0.25,
-      sessionChecksEnabled: false,
-      showDebugInformation: false,
-      clearHashAfterLogin: false,
-      nonceStateSeparator: 'semicolon',
-    },
-
-    // Google OAuth2
-    google: {
-      enabled: true, // Enable for development - requires client ID configuration in production
-      name: 'Google',
-      description: 'Continue with Google',
-      icon: 'fab fa-google',
-      brandColor: '#db4437',
-      buttonClass: 'btn-danger',
-      issuer: 'https://accounts.google.com',
-      clientId: 'YOUR_GOOGLE_CLIENT_ID', // Replace with actual Google Client ID
-      responseType: 'code',
-      scope: 'openid profile email',
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-      useSilentRefresh: true,
-      strictDiscoveryDocumentValidation: false,
-      showDebugInformation: false,
-      clearHashAfterLogin: true,
-      nonceStateSeparator: 'semicolon',
-      // Google-specific OIDC discovery endpoint
-      oidc: true,
-      wellKnownEndpoints: 'https://accounts.google.com/.well-known/openid_configuration',
-      // Google-specific parameters
-      customUrlParams: {
-        // Force account selection
-        prompt: 'select_account',
-        // Request additional Google-specific scopes if needed
-        access_type: 'offline',
-      },
-      // Additional Google OAuth2 endpoints (fallback if OIDC discovery fails)
-      loginUrl: 'https://accounts.google.com/oauth/authorize',
-      tokenEndpoint: 'https://oauth2.googleapis.com/token',
-      userinfoEndpoint: 'https://openidconnect.googleapis.com/v1/userinfo',
-      jwksUri: 'https://www.googleapis.com/oauth2/v3/certs',
-    },
-
-    // Facebook OAuth2
-    facebook: {
-      enabled: true, // Enable for development - requires app ID configuration in production
-      name: 'Facebook',
-      description: 'Continue with Facebook',
-      icon: 'fab fa-facebook-f',
-      brandColor: '#4267B2',
-      buttonClass: 'btn-primary',
-      issuer: 'https://www.facebook.com',
-      clientId: 'YOUR_FACEBOOK_APP_ID', // Replace with actual Facebook App ID
-      responseType: 'code',
-      scope: 'email public_profile', // Facebook uses different scope format
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      useSilentRefresh: false, // Facebook doesn't support OIDC silent refresh
-      strictDiscoveryDocumentValidation: false,
-      showDebugInformation: false,
-      clearHashAfterLogin: true,
-      // Facebook OAuth2 specific configuration
-      oidc: false, // Facebook doesn't fully support OIDC, use OAuth2
-      loginUrl: 'https://www.facebook.com/v18.0/dialog/oauth',
-      tokenEndpoint: 'https://graph.facebook.com/v18.0/oauth/access_token',
-      userinfoEndpoint: 'https://graph.facebook.com/v18.0/me',
-      // Facebook-specific parameters
-      customUrlParams: {
-        display: 'popup',
-        // Request specific Facebook fields
-        fields: 'id,name,email,picture.type(large)',
-        // Facebook API version
-        auth_type: 'rerequest',
-      },
-      // Additional Facebook configuration
-      requireHttps: true,
-      sessionChecksEnabled: false,
-      // Custom token validation for Facebook
-      skipIssuerCheck: true, // Facebook tokens don't include standard issuer
-      disablePKCE: false, // Facebook supports PKCE
-    },
-
-    // GitHub OAuth2
-    github: {
-      enabled: true, // Enable for development - requires client ID configuration in production
-      name: 'GitHub',
-      description: 'Continue with GitHub',
-      icon: 'fab fa-github',
-      brandColor: '#333',
-      buttonClass: 'btn-dark',
-      issuer: 'https://github.com',
-      clientId: 'YOUR_GITHUB_CLIENT_ID', // Replace with actual GitHub Client ID
-      responseType: 'code',
-      scope: 'read:user user:email', // GitHub-specific scopes
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      useSilentRefresh: false, // GitHub doesn't support OIDC silent refresh
-      strictDiscoveryDocumentValidation: false,
-      showDebugInformation: false,
-      clearHashAfterLogin: true,
-      // GitHub OAuth2 specific configuration
-      oidc: false, // GitHub uses OAuth2, not OIDC
-      loginUrl: 'https://github.com/login/oauth/authorize',
-      tokenEndpoint: 'https://github.com/login/oauth/access_token',
-      userinfoEndpoint: 'https://api.github.com/user',
-      // GitHub-specific parameters
-      customUrlParams: {
-        // Allow user to choose which account to use
-        prompt: 'select_account',
-        // Request specific permissions
-        allow_signup: 'true',
-      },
-      // Additional GitHub configuration
-      requireHttps: true,
-      sessionChecksEnabled: false,
-      // Custom token validation for GitHub
-      skipIssuerCheck: true, // GitHub tokens don't include standard issuer
-      disablePKCE: false, // GitHub supports PKCE
-      // GitHub API configuration
-      apiHeaders: {
-        Accept: 'application/vnd.github.v3+json',
-        'User-Agent': 'PickleIQ-App',
-      },
-      // Additional endpoints for GitHub user data
-      emailEndpoint: 'https://api.github.com/user/emails',
-    },
-
-    // Microsoft/Azure AD OAuth2
-    microsoft: {
-      enabled: true, // Enable for development - requires client ID configuration in production
-      name: 'Microsoft',
-      description: 'Continue with Microsoft',
-      icon: 'fab fa-microsoft',
-      brandColor: '#00a1f1',
-      buttonClass: 'btn-info',
-      issuer: 'https://login.microsoftonline.com/common/v2.0',
-      clientId: 'YOUR_MICROSOFT_CLIENT_ID', // Replace with actual Microsoft/Azure AD Client ID
-      responseType: 'code',
-      scope: 'openid profile email User.Read', // Microsoft-specific scopes
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-      useSilentRefresh: true,
-      strictDiscoveryDocumentValidation: false,
-      showDebugInformation: false,
-      clearHashAfterLogin: true,
-      nonceStateSeparator: 'semicolon',
-      // Microsoft OIDC configuration
-      oidc: true,
-      wellKnownEndpoints: 'https://login.microsoftonline.com/common/v2.0/.well-known/openid_configuration',
-      // Microsoft-specific parameters
-      customUrlParams: {
-        // Force account selection
-        prompt: 'select_account',
-        // Specify tenant (common, organizations, consumers)
-        // 'common' allows both work/school and personal accounts
-        domain_hint: '', // Leave empty for account selection
-      },
-      // Additional Microsoft configuration
-      requireHttps: true,
-      sessionChecksEnabled: true,
-      timeoutFactor: 0.25,
-      silentRefreshTimeout: 50000,
-      // Microsoft Graph API endpoints
-      loginUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
-      tokenEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-      userinfoEndpoint: 'https://graph.microsoft.com/v1.0/me',
-      jwksUri: 'https://login.microsoftonline.com/common/discovery/v2.0/keys',
-      // Logout endpoint for proper session cleanup
-      logoutUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/logout',
-    },
-  },
+  // Legacy OAuth providers - now handled by Azure AD B2C
+  // All social logins (Google, Facebook, Microsoft, GitHub) are configured
+  // through Azure AD B2C policies, reducing complexity and improving security
+  legacyOAuthNote: 'Social logins now managed through Azure AD B2C for better security and simpler configuration',
   sampleModel40: {
     level: '4.0',
     playername: 'Fuji Nguyen',

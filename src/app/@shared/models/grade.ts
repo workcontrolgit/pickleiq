@@ -6,4 +6,6 @@ export const GradeAttributesMapping = {
 export interface Grade {
   grade: string;
   description: string;
+  points?: number;
+  color?: string;
 }

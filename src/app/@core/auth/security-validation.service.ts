@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { AuthProvider } from './auth.service';
-import { environment } from '@env/environment';
+import { LegacyAuthAdapterService } from '@core/services/legacy-auth-adapter.service';
 
 export interface SecurityValidationRule {
   id: string;
@@ -58,7 +58,7 @@ export class SecurityValidationService {
   private validationRulesSubject$ = new BehaviorSubject<SecurityValidationRule[]>([]);
   public validationRules$ = this.validationRulesSubject$.asObservable();
 
-  constructor() {
+  constructor(private legacyAuthAdapter: LegacyAuthAdapterService) {
     this.initializeDefaultRules();
   }
 
@@ -445,8 +445,9 @@ export class SecurityValidationService {
   private async validateGoogleAudience(context: SecurityValidationContext): Promise<SecurityValidationResult> {
     try {
       const claims = this.decodeJWTClaims(context.accessToken || '');
-      // In a real implementation, you'd get this from environment configuration
-      const expectedClientId = environment.oauthProviders.google.clientId;
+      // Get configuration from legacy adapter
+      const config = this.legacyAuthAdapter.getLegacyAuthConfig();
+      const expectedClientId = config.oauthProviders?.['google']?.clientId || 'not-configured';
 
       if (claims.aud !== expectedClientId) {
         return {
@@ -594,7 +595,8 @@ export class SecurityValidationService {
   private async validateFacebookApp(context: SecurityValidationContext): Promise<SecurityValidationResult> {
     try {
       const claims = this.decodeJWTClaims(context.accessToken || '');
-      const expectedAppId = environment.oauthProviders.facebook.clientId;
+      const config = this.legacyAuthAdapter.getLegacyAuthConfig();
+      const expectedAppId = config.oauthProviders?.['facebook']?.clientId || 'not-configured';
 
       if (claims.app_id !== expectedAppId) {
         return {

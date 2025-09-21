@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthConfig } from 'angular-oauth2-oidc';
-import { environment } from '@env/environment';
+import { LegacyAuthAdapterService } from '@core/services/legacy-auth-adapter.service';
 
 export interface OAuthProviderMetadata {
   id: string;
@@ -25,13 +25,13 @@ export interface OAuthProviderConfig extends AuthConfig {
   providedIn: 'root',
 })
 export class OAuthProviderFactoryService {
-  constructor() {}
+  constructor(private legacyAuthAdapter: LegacyAuthAdapterService) {}
 
   /**
-   * Get all available OAuth provider configurations from environment
+   * Get all available OAuth provider configurations from legacy adapter
    */
   public getAllProviders(): Record<string, OAuthProviderConfig> {
-    return environment.oauthProviders || {};
+    return this.legacyAuthAdapter.getLegacyAuthConfig().oauthProviders || {};
   }
 
   /**
@@ -90,19 +90,18 @@ export class OAuthProviderFactoryService {
       }
     });
 
-    // Sort by priority order if defined in environment
-    if (environment.auth?.providerPriority) {
-      metadata.sort((a, b) => {
-        const aPriority = environment.auth.providerPriority.indexOf(a.id);
-        const bPriority = environment.auth.providerPriority.indexOf(b.id);
+    // Sort by priority order - simplified for Azure AD B2C
+    const defaultPriority = ['azure-ad-b2c', 'anonymous'];
+    metadata.sort((a, b) => {
+      const aPriority = defaultPriority.indexOf(a.id);
+      const bPriority = defaultPriority.indexOf(b.id);
 
-        // If not found in priority list, put at end
-        const aPos = aPriority === -1 ? 999 : aPriority;
-        const bPos = bPriority === -1 ? 999 : bPriority;
+      // If not found in priority list, put at end
+      const aPos = aPriority === -1 ? 999 : aPriority;
+      const bPos = bPriority === -1 ? 999 : bPriority;
 
-        return aPos - bPos;
-      });
-    }
+      return aPos - bPos;
+    });
 
     return metadata;
   }

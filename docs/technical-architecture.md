@@ -1,11 +1,26 @@
-# PickleIQ Technical Architecture
+# ⚠️ DEPRECATED - HIGH RISK ARCHITECTURE ⚠️
 
-## Sports Theme, AI Integration, and Partnership-Ready Platform
+## ❌ THIS ARCHITECTURE HAS BEEN REPLACED ❌
 
-**Document Version**: 1.0
+**Document Version**: 1.0 (DEPRECATED)
 **Created**: September 2025
-**Last Updated**: September 2025
-**Architecture Type**: Microservices with Monolithic Frontend
+**Deprecated**: September 2025
+**Risk Level**: HIGH (Multiple Critical Security Issues)
+
+**🚨 CRITICAL WARNING: This architecture contains severe security vulnerabilities and should NOT be implemented:**
+
+- Hardcoded API keys exposed in client code
+- Complex microservices without proper infrastructure
+- Client-side business logic for financial calculations
+- Over-engineered systems creating multiple failure points
+- Inadequate security controls
+
+**✅ USE THE REVISED ARCHITECTURE INSTEAD:**
+Please refer to `revised-technical-architecture.md` for the secure, Azure-first approach that mitigates these risks.
+
+---
+
+## ❌ Original High-Risk Design (DO NOT USE)
 
 ---
 

@@ -21,8 +21,8 @@ const log = new Logger('App');
   standalone: false,
 })
 export class AppComponent implements OnInit, OnDestroy {
-  // http loader filter
-  filteredUrlPatterns: string | null = environment.oauthProviders.oidc.issuer + '/connect';
+  // http loader filter - simplified for Azure AD B2C
+  filteredUrlPatterns: string | null = 'https://pickleiq.b2clogin.com';
 
   constructor(
     private router: Router,

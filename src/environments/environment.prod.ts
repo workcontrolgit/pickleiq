@@ -36,147 +36,46 @@ export const environment = {
     level50:
       '<div class="alert alert-success"><h4>Section 2 - Skill Evaluation</h4><span class="fw-normal">Select a rating for each skill code.  Skill level 5.0 should ALSO possess all 4.5 skills.</span><p><div>A = Solid, consistent performance <br>B = Good basic form, but needs work <br> C = Attempted but very poorly executed/needs work <br>D = Not observed or not able to execute </div></p></div>',
   },
-  // skills list in googlesheet
-  googleSheet: {
-    apiKey: 'AIzaSyC3AgyGHXMyj8j-iFZ4ucrenprWrZm0VKI',
-    spreadsheetId: '17zEoQvmjqBHoDykjxgun4upXg5QT6KooHnuAp_wXmac',
-    worksheetGrades: 'Grades',
-    worksheetSkills: 'Skills',
-  },
-  // training video search in youtube
-  youtube: {
-    apiUrl: 'https://www.googleapis.com/youtube/v3/search',
-    apiKey: 'AIzaSyAq9W0tD3SJxtn6RE0aUcBseMMz_WcKhAU',
-    maxResults: 10,
+  // External services - API keys secured in Azure Key Vault
+  externalServices: {
+    googleSheets: {
+      // API calls proxied through secure server-side endpoints
+      endpoint: '/api/v1/data/skills',
+      worksheetGrades: 'Grades',
+      worksheetSkills: 'Skills',
+    },
+    youtube: {
+      // YouTube search secured through server proxy
+      endpoint: '/api/v1/media/youtube',
+      maxResults: 10,
+    },
   },
 
-  // Multi-Auth Configuration
+  // Azure AD B2C Authentication - Production Configuration
   auth: {
     // Disable anonymous authentication in production
     enableAnonymousAuth: false,
-    // Default auth mode: 'oidc' | 'anonymous' | 'google' | 'facebook' | 'github' | 'microsoft'
-    defaultAuthMode: 'oidc',
-    // Available auth providers in production (configure as needed)
-    availableProviders: ['oidc', 'google', 'microsoft'], // Enable additional providers as configured
-    // Provider priority order for UI display
-    providerPriority: ['google', 'oidc', 'microsoft', 'facebook', 'github'],
+    // Primary authentication provider
+    provider: 'azure-ad-b2c',
+    // Production mode settings
+    developmentMode: false,
   },
 
-  // Anonymous Auth Configuration - Disabled in Production
-  anonymousAuth: {
-    enabled: false,
-    sessionTimeout: 0,
-    defaultUser: null as any,
-    warningMessage: '',
-    tokenPrefix: '',
+  // Azure AD B2C Configuration - Production
+  azureAdB2C: {
+    tenantName: 'pickleiq',
+    clientId: 'production-client-id', // Configure in Azure Portal
+    policyName: 'B2C_1_signup_signin',
+    domain: 'pickleiq.b2clogin.com',
+    // Production redirect URIs
+    redirectUri: window.location.origin + '/auth-callback',
+    postLogoutRedirectUri: window.location.origin,
+    silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
   },
 
-  // OAuth Provider Configurations
-  oauthProviders: {
-    // Custom OIDC Provider (existing IdentityServer)
-    oidc: {
-      enabled: true,
-      name: 'Organization Login',
-      description: 'Login with your organization account',
-      icon: 'fas fa-shield-alt',
-      brandColor: '#007bff',
-      buttonClass: 'btn-primary',
-      issuer: 'https://cat-token-identity.azurewebsites.net',
-      clientId: 'MickleballClient',
-      responseType: 'code',
-      scope: 'openid profile email roles app.api.employeeprofile.read',
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-      useSilentRefresh: true,
-      silentRefreshTimeout: 50000,
-      timeoutFactor: 0.25,
-      sessionChecksEnabled: false,
-      showDebugInformation: false,
-      clearHashAfterLogin: false,
-      nonceStateSeparator: 'semicolon',
-    },
-
-    // Google OAuth2 - Configure with your production client ID
-    google: {
-      enabled: false, // Set to true and configure clientId for production use
-      name: 'Google',
-      description: 'Continue with Google',
-      icon: 'fab fa-google',
-      brandColor: '#db4437',
-      buttonClass: 'btn-danger',
-      issuer: 'https://accounts.google.com',
-      clientId: '', // Configure with your Google Client ID for production
-      responseType: 'code',
-      scope: 'openid profile email',
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-      useSilentRefresh: true,
-      strictDiscoveryDocumentValidation: false,
-    },
-
-    // Facebook OAuth2 - Configure with your production app ID
-    facebook: {
-      enabled: false, // Set to true and configure clientId for production use
-      name: 'Facebook',
-      description: 'Continue with Facebook',
-      icon: 'fab fa-facebook-f',
-      brandColor: '#4267B2',
-      buttonClass: 'btn-primary',
-      issuer: 'https://www.facebook.com',
-      clientId: '', // Configure with your Facebook App ID for production
-      responseType: 'code',
-      scope: 'openid profile email',
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      useSilentRefresh: false,
-      strictDiscoveryDocumentValidation: false,
-      customUrlParams: {
-        display: 'popup',
-      },
-    },
-
-    // GitHub OAuth2 - Configure with your production client ID
-    github: {
-      enabled: false, // Set to true and configure clientId for production use
-      name: 'GitHub',
-      description: 'Continue with GitHub',
-      icon: 'fab fa-github',
-      brandColor: '#333',
-      buttonClass: 'btn-dark',
-      issuer: 'https://github.com',
-      clientId: '', // Configure with your GitHub Client ID for production
-      responseType: 'code',
-      scope: 'openid profile email',
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      useSilentRefresh: false,
-      strictDiscoveryDocumentValidation: false,
-      loginUrl: 'https://github.com/login/oauth/authorize',
-      tokenEndpoint: 'https://github.com/login/oauth/access_token',
-      userinfoEndpoint: 'https://api.github.com/user',
-    },
-
-    // Microsoft/Azure AD OAuth2 - Configure with your production client ID
-    microsoft: {
-      enabled: false, // Set to true and configure clientId for production use
-      name: 'Microsoft',
-      description: 'Continue with Microsoft',
-      icon: 'fab fa-microsoft',
-      brandColor: '#00a1f1',
-      buttonClass: 'btn-info',
-      issuer: 'https://login.microsoftonline.com/common/v2.0',
-      clientId: '', // Configure with your Microsoft/Azure AD Client ID for production
-      responseType: 'code',
-      scope: 'openid profile email',
-      redirectUri: window.location.origin + '/auth-callback',
-      postLogoutRedirectUri: window.location.origin,
-      silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
-      useSilentRefresh: true,
-      strictDiscoveryDocumentValidation: false,
-    },
-  },
+  // Social logins managed through Azure AD B2C
+  socialLoginNote:
+    'All social authentication providers (Google, Facebook, Microsoft, GitHub) are configured through Azure AD B2C policies for enhanced security and simplified management',
   sampleModel40: {
     level: '4.0',
     playername: 'Fuji Nguyen',

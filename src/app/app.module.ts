@@ -21,7 +21,7 @@ import { ToastsContainer } from '@app/@shared/toast/toasts-container.component';
 
 import { NgHttpLoaderModule } from 'ng-http-loader';
 
-import { API_KEY, GoogleSheetsDbService } from 'ng-google-sheets-db';
+// Google Sheets integration removed - now handled securely server-side
 
 import { TableGradesService } from './services/api/table-grades.service';
 import { TableSkillsService } from './services/api/table-skills.service';
@@ -74,11 +74,7 @@ export function initTableSkills(configService: TableSkillsService) {
       multi: true,
       useFactory: initTableSkills,
     },
-    {
-      provide: API_KEY,
-      useValue: environment.googleSheet.apiKey,
-    },
-    GoogleSheetsDbService,
+    // Google Sheets API key removed for security - now handled server-side
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandler,

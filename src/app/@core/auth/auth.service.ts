@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { OAuthErrorEvent, OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, combineLatest, Observable, ReplaySubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { LegacyAuthAdapterService } from '@core/services/legacy-auth-adapter.service';
 import { environment } from '@env/environment';
 import { AnonymousAuthProvider } from './anonymous-auth-provider';
 import { OAuthProviderFactoryService } from './oauth-provider-factory.service';
@@ -28,7 +29,7 @@ export class AuthService {
   private isDoneLoadingSubject$ = new ReplaySubject<boolean>();
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 
-  private currentAuthModeSubject$ = new BehaviorSubject<AuthMode>(environment.auth.defaultAuthMode as AuthMode);
+  private currentAuthModeSubject$ = new BehaviorSubject<AuthMode>('azure-ad-b2c' as AuthMode);
   public currentAuthMode$ = this.currentAuthModeSubject$.asObservable();
 
   private authProviderSubject$ = new BehaviorSubject<AuthProvider | null>(null);
@@ -66,7 +67,8 @@ export class AuthService {
     private csrfProtection: CSRFProtectionService,
     private securityValidation: SecurityValidationService,
     private rateLimiting: RateLimitingService,
-    private securityAudit: SecurityAuditService
+    private securityAudit: SecurityAuditService,
+    private legacyAuthAdapter: LegacyAuthAdapterService
   ) {
     this.initializeAuthProviders();
     this.initializeSessionManager();
@@ -74,13 +76,14 @@ export class AuthService {
   }
 
   private initializeAuthProviders(): void {
-    // Initialize OIDC events if enabled
-    if (environment.oauthProviders?.oidc?.enabled) {
+    // Initialize OIDC events using legacy adapter
+    const config = this.legacyAuthAdapter.getLegacyAuthConfig();
+    if (config.oauthProviders?.['azure-ad-b2c']?.enabled) {
       this.initializeOidcEvents();
     }
 
     // Initialize Anonymous auth events if enabled
-    if (environment.anonymousAuth?.enabled) {
+    if (this.legacyAuthAdapter.isAnonymousAuthEnabled()) {
       this.initializeAnonymousEvents();
     }
 
@@ -243,7 +246,8 @@ export class AuthService {
       .pipe(filter((e) => ['session_terminated', 'session_error'].includes(e.type)))
       .subscribe((e) => this.navigateToLoginPage());
 
-    if (environment.oauthProviders?.oidc?.enabled) {
+    const config = this.legacyAuthAdapter.getLegacyAuthConfig();
+    if (config.oauthProviders?.['azure-ad-b2c']?.enabled) {
       this.oauthService.setupAutomaticSilentRefresh();
     }
   }
@@ -266,7 +270,10 @@ export class AuthService {
       console.log('Found existing anonymous session');
     }
     // Check if there's an existing OIDC session
-    else if (environment.oauthProviders?.oidc?.enabled && this.oauthService.hasValidAccessToken()) {
+    else if (
+      this.legacyAuthAdapter.getLegacyAuthConfig().oauthProviders?.['azure-ad-b2c']?.enabled &&
+      this.oauthService.hasValidAccessToken()
+    ) {
       this.setAuthMode('oidc');
       this.isAuthenticatedSubject$.next(true);
       this.authProviderSubject$.next('oidc');
@@ -283,14 +290,14 @@ export class AuthService {
     }
 
     // If anonymous auth is enabled and it's the default mode, use it
-    if (environment.auth.enableAnonymousAuth && environment.auth.defaultAuthMode === 'anonymous') {
+    if (this.legacyAuthAdapter.isAnonymousAuthEnabled()) {
       this.setAuthMode('anonymous');
       this.isDoneLoadingSubject$.next(true);
       return Promise.resolve();
     }
 
     // Otherwise, proceed with OIDC flow if enabled
-    if (!environment.oauthProviders?.oidc?.enabled) {
+    if (!this.legacyAuthAdapter.getLegacyAuthConfig().oauthProviders?.['azure-ad-b2c']?.enabled) {
       this.isDoneLoadingSubject$.next(true);
       return Promise.resolve();
     }
@@ -609,7 +616,7 @@ export class AuthService {
   }
 
   public loginAnonymous(): Promise<void> {
-    if (!environment.auth.enableAnonymousAuth) {
+    if (!this.legacyAuthAdapter.isAnonymousAuthEnabled()) {
       return Promise.reject(new Error('Anonymous authentication is not enabled'));
     }
 
@@ -634,7 +641,7 @@ export class AuthService {
   }
 
   public loginOidc(targetUrl?: string): Promise<void> {
-    if (!environment.oauthProviders?.oidc?.enabled) {
+    if (!this.legacyAuthAdapter.getLegacyAuthConfig().oauthProviders?.['azure-ad-b2c']?.enabled) {
       return Promise.reject(new Error('OIDC authentication is not enabled'));
     }
 
@@ -833,11 +840,11 @@ export class AuthService {
   }
 
   public isAnonymousAuthEnabled(): boolean {
-    return environment.auth.enableAnonymousAuth === true;
+    return this.legacyAuthAdapter.isAnonymousAuthEnabled();
   }
 
   public isOidcEnabled(): boolean {
-    return environment.oauthProviders?.oidc?.enabled === true;
+    return this.legacyAuthAdapter.getLegacyAuthConfig().oauthProviders?.['azure-ad-b2c']?.enabled === true;
   }
 
   /**
@@ -846,7 +853,7 @@ export class AuthService {
   public isProviderAvailable(provider: AuthProvider): boolean {
     switch (provider) {
       case 'anonymous':
-        return environment.auth.enableAnonymousAuth === true;
+        return this.legacyAuthAdapter.isAnonymousAuthEnabled();
 
       case 'oidc':
       case 'google':
@@ -867,7 +874,7 @@ export class AuthService {
     const availableProviders: AuthProvider[] = [];
 
     // Check anonymous auth
-    if (environment.auth.enableAnonymousAuth) {
+    if (this.legacyAuthAdapter.isAnonymousAuthEnabled()) {
       availableProviders.push('anonymous');
     }
 
@@ -1312,8 +1319,9 @@ export class AuthService {
   public getAuthWarningMessage(): string | null {
     const currentMode = this.getCurrentAuthMode();
 
-    if (currentMode === 'anonymous' && environment.anonymousAuth?.warningMessage) {
-      return environment.anonymousAuth.warningMessage;
+    if (currentMode === 'anonymous') {
+      const config = this.legacyAuthAdapter.getLegacyAuthConfig();
+      return config.anonymousAuth?.warningMessage || 'Using temporary authentication for development';
     }
 
     return null;
